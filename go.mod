@@ -3,7 +3,7 @@ module github.com/celestiaorg/knuu-example
 go 1.20
 
 require (
-	github.com/celestiaorg/knuu v0.0.0-20230514153810-726775783f48
+	github.com/celestiaorg/knuu v0.0.0-20230515112631-3ecea2d8c031
 	github.com/sirupsen/logrus v1.9.0
 )
 
@@ -151,5 +151,3 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
-
-replace github.com/celestiaorg/knuu => ../knuu
