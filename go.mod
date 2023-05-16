@@ -3,8 +3,9 @@ module github.com/celestiaorg/knuu-example
 go 1.20
 
 require (
-	github.com/celestiaorg/knuu v0.0.0-20230515112631-3ecea2d8c031
+	github.com/celestiaorg/knuu v0.1.0
 	github.com/sirupsen/logrus v1.9.0
+	github.com/stretchr/testify v1.8.2
 )
 
 require (
