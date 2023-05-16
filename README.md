@@ -17,5 +17,17 @@ If you have feedback on the framework, want to report a bug or suggest an improv
 ## Run
 
 ```shell
-go run .
+go test -v ./...
+```
+
+Or run only the basic examples:
+
+```shell
+go test -v ./basic
+```
+
+Or the celestia-app examples:
+
+```shell
+go test -v ./celestia_app
 ```
