@@ -17,37 +17,9 @@ func TestUpgrade(t *testing.T) {
 		t.Fatalf("Error creating executor: %v", err)
 	}
 
-	validator, err := knuu.NewInstance("validator")
+	validator, err := Instances["validator"].Clone()
 	if err != nil {
-		t.Fatalf("Error creating instance '%v':", err)
-	}
-	err = validator.SetImage("ghcr.io/celestiaorg/celestia-app:v0.12.1")
-	if err != nil {
-		t.Fatalf("Error setting image: %v", err)
-	}
-	err = validator.AddPortTCP(26657)
-	if err != nil {
-		t.Fatalf("Error adding port: %v", err)
-	}
-	err = validator.AddFile("resources/genesis.sh", "/opt/genesis.sh", "0:0")
-	if err != nil {
-		t.Fatalf("Error adding file: %v", err)
-	}
-	_, err = validator.ExecuteCommand("/bin/sh", "/opt/genesis.sh")
-	if err != nil {
-		t.Fatalf("Error executing command: %v", err)
-	}
-	err = validator.SetArgs("start", "--home=/root/.celestia-app", "--rpc.laddr=tcp://0.0.0.0:26657")
-	if err != nil {
-		t.Fatalf("Error setting args: %v", err)
-	}
-	err = validator.AddVolume("/root/.celestia-app", "1Gi")
-	if err != nil {
-		t.Fatalf("Error adding volume: %v", err)
-	}
-	err = validator.Commit()
-	if err != nil {
-		t.Fatalf("Error committing instance: %v", err)
+		t.Fatalf("Error cloning instance: %v", err)
 	}
 
 	t.Cleanup(func() {

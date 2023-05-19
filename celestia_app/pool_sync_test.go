@@ -17,63 +17,16 @@ func TestPoolSync(t *testing.T) {
 		t.Fatalf("Error creating executor: %v", err)
 	}
 
-	validator, err := knuu.NewInstance("validator")
+	validator, err := Instances["validator"].Clone()
 	if err != nil {
-		t.Fatalf("Error creating instance '%v':", err)
-	}
-	err = validator.SetImage("ghcr.io/celestiaorg/celestia-app:v0.12.2")
-	if err != nil {
-		t.Fatalf("Error setting image: %v", err)
-	}
-	err = validator.AddPortTCP(26656)
-	if err != nil {
-		t.Fatalf("Error adding port: %v", err)
-	}
-	err = validator.AddPortTCP(26657)
-	if err != nil {
-		t.Fatalf("Error adding port: %v", err)
-	}
-	err = validator.AddFile("resources/genesis.sh", "/opt/genesis.sh", "0:0")
-	if err != nil {
-		t.Fatalf("Error adding file: %v", err)
-	}
-	_, err = validator.ExecuteCommand("/bin/sh", "/opt/genesis.sh")
-	if err != nil {
-		t.Fatalf("Error executing command: %v", err)
-	}
-	err = validator.SetArgs("start", "--home=/root/.celestia-app", "--rpc.laddr=tcp://0.0.0.0:26657")
-	if err != nil {
-		t.Fatalf("Error setting args: %v", err)
-	}
-	err = validator.Commit()
-	if err != nil {
-		t.Fatalf("Error committing instance: %v", err)
+		t.Fatalf("Error cloning instance: %v", err)
 	}
 
-	full, err := knuu.NewInstance("full")
+	full, err := Instances["full"].Clone()
 	if err != nil {
-		t.Fatalf("Error creating instance '%v':", err)
+		t.Fatalf("Error cloning instance: %v", err)
 	}
-	err = full.SetImage("ghcr.io/celestiaorg/celestia-app:v0.12.2")
-	if err != nil {
-		t.Fatalf("Error setting image: %v", err)
-	}
-	err = full.AddPortTCP(26657)
-	if err != nil {
-		t.Fatalf("Error adding port: %v", err)
-	}
-	genesis, err := validator.GetFileBytes("/root/.celestia-app/config/genesis.json")
-	if err != nil {
-		t.Fatalf("Error getting genesis: %v", err)
-	}
-	err = full.AddFileBytes(genesis, "/root/.celestia-app/config/genesis.json", "0:0")
-	if err != nil {
-		t.Fatalf("Error adding file: %v", err)
-	}
-	err = full.Commit()
-	if err != nil {
-		t.Fatalf("Error committing instance: %v", err)
-	}
+
 	// new InstancePool struct
 	fullNodes := &knuu.InstancePool{}
 
