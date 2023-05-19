@@ -7,15 +7,10 @@ import (
 	"testing"
 )
 
-// DO NOT REMOVE THIS
 func TestMain(m *testing.M) {
 	err := knuu.Initialize()
 	if err != nil {
-		// This is very important. If this is not here, the program will fail
-		if err.Error() == "InitReexec triggered re-exec" {
-			return
-		}
-		logrus.Errorf("Error initializing: %v", err)
+		logrus.Fatalf("error initializing knuu: %v", err)
 	}
 	prepareInstances(m)
 	exitVal := m.Run()
