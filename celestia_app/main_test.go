@@ -53,6 +53,11 @@ func prepareInstances(m *testing.M) {
 	if err != nil {
 		logrus.Fatalf("Error setting args: %v", err)
 	}
+	err = validator.SetMemory("200Mi", "200Mi")
+	if err != nil {
+		logrus.Fatalf("Error setting memory: %v", err)
+	}
+	err = validator.SetCPU("300m")
 	err = validator.AddVolume("/root/.celestia-app", "1Gi")
 	if err != nil {
 		logrus.Fatalf("Error adding volume: %v", err)
@@ -88,6 +93,11 @@ func prepareInstances(m *testing.M) {
 	if err != nil {
 		logrus.Fatalf("Error adding file: %v", err)
 	}
+	err = full.SetMemory("200Mi", "200Mi")
+	if err != nil {
+		logrus.Fatalf("Error setting memory: %v", err)
+	}
+	err = full.SetCPU("300m")
 	err = full.Commit()
 	if err != nil {
 		logrus.Fatalf("Error committing instance: %v", err)
