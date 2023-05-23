@@ -1,17 +1,22 @@
 package celestia_app
 
 import (
+	"fmt"
 	"github.com/celestiaorg/knuu/pkg/knuu"
 	"github.com/sirupsen/logrus"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestMain(m *testing.M) {
-	err := knuu.Initialize()
+	t := time.Now()
+	identifier := fmt.Sprintf("%s_%03d", t.Format("20060102_150405"), t.Nanosecond()/1e6)
+	err := knuu.InitializeWithIdentifier(identifier)
 	if err != nil {
 		logrus.Fatalf("error initializing knuu: %v", err)
 	}
+	logrus.Infof("Unique identifier: %s", identifier)
 	prepareInstances(m)
 	exitVal := m.Run()
 	os.Exit(exitVal)
@@ -48,6 +53,11 @@ func prepareInstances(m *testing.M) {
 	if err != nil {
 		logrus.Fatalf("Error setting args: %v", err)
 	}
+	err = validator.SetMemory("200Mi", "200Mi")
+	if err != nil {
+		logrus.Fatalf("Error setting memory: %v", err)
+	}
+	err = validator.SetCPU("300m")
 	err = validator.AddVolume("/root/.celestia-app", "1Gi")
 	if err != nil {
 		logrus.Fatalf("Error adding volume: %v", err)
@@ -83,6 +93,11 @@ func prepareInstances(m *testing.M) {
 	if err != nil {
 		logrus.Fatalf("Error adding file: %v", err)
 	}
+	err = full.SetMemory("200Mi", "200Mi")
+	if err != nil {
+		logrus.Fatalf("Error setting memory: %v", err)
+	}
+	err = full.SetCPU("300m")
 	err = full.Commit()
 	if err != nil {
 		logrus.Fatalf("Error committing instance: %v", err)

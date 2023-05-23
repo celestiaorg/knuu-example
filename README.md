@@ -9,6 +9,12 @@ If you have feedback on the framework, want to report a bug or suggest an improv
 1. Install [Docker](https://docs.docker.com/get-docker/).
 
 2. Set up access to a Kubernetes cluster using your kubeconfig and create the `test` namespace.
+> **Note:** The used namespace can be changed by setting the `KNUU_NAMESPACE` environment variable.
+
+
+## Write Tests
+
+You can find the relevant documentation in the `pkg/knuu` package at: https://pkg.go.dev/github.com/celestiaorg/knuu
 
 ## Run
 
