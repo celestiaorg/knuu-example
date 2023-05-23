@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/celestiaorg/knuu v0.3.0
 	github.com/sirupsen/logrus v1.9.2
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.3
 )
 
 require (
