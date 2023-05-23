@@ -12,6 +12,10 @@ If you have feedback on the framework, want to report a bug or suggest an improv
 > **Note:** The used namespace can be changed by setting the `KNUU_NAMESPACE` environment variable.
 
 
+## Write Tests
+
+You can find the relevant documentation in the `pkg/knuu` package at: https://pkg.go.dev/github.com/celestiaorg/knuu
+
 ## Run
 
 ```shell
