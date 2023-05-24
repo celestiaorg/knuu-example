@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/celestiaorg/celestia-node v0.10.0
-	github.com/celestiaorg/knuu v0.4.1-0.20230524132110-888b92f754f1
+	github.com/celestiaorg/knuu v0.5.0
 	github.com/sirupsen/logrus v1.9.2
 	github.com/stretchr/testify v1.8.3
 )
@@ -335,4 +335,5 @@ replace (
 	github.com/filecoin-project/dagstore => github.com/celestiaorg/dagstore v0.0.0-20230413141458-735ab09a15d6
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/tendermint/tendermint => github.com/celestiaorg/celestia-core v1.15.0-tm-v0.34.23
+	github.com/celestiaorg/knuu => /home/samuel/git/celestiaorg/knuu/branches/feature/dont-build-push-if-no-changes
 )
