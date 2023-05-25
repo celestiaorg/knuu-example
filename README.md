@@ -33,3 +33,9 @@ Or the celestia-app examples:
 ```shell
 go test -v ./celestia_app
 ```
+
+Or the celestia-node examples:
+
+```shell
+go test -v ./celestia_node
+```
