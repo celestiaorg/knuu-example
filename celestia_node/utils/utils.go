@@ -59,7 +59,7 @@ func CreateAndStartBridge(executor *knuu.Executor, instanceName string, consensu
 		return nil, fmt.Errorf("error creating instance: %w", err)
 	}
 
-	err = bridge.SetCommand([]string{"celestia", "bridge", "start", "--node.store", "/home/celestia/.celestia-test", "--core.ip", consensusIP})
+	err = bridge.SetCommand("celestia", "bridge", "start", "--node.store", "/home/celestia/.celestia-test", "--core.ip", consensusIP)
 	if err != nil {
 		return nil, fmt.Errorf("error setting command: %w", err)
 	}
@@ -106,7 +106,7 @@ func CreateAndStartNode(executor *knuu.Executor, instanceName string, nodeType s
 	}
 	trustedPeers := fmt.Sprintf("/ip4/%s/tcp/2121/p2p/%s", bridgeIP, bridgeID)
 
-	err = node.SetCommand([]string{"celestia", nodeType, "start", "--node.store", "/home/celestia/.celestia-test", "--headers.trusted-peers", trustedPeers})
+	err = node.SetCommand("celestia", nodeType, "start", "--node.store", "/home/celestia/.celestia-test", "--headers.trusted-peers", trustedPeers)
 	if err != nil {
 		return nil, fmt.Errorf("error setting command: %w", err)
 	}
