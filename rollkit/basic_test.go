@@ -138,6 +138,7 @@ func TestBasic(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error getting height: %v", err)
 	}
+	t.Log("Wait for full node to catch up to aggregator")
 	err = app_utils.WaitForHeight(Executor, gmFull, aggregatorHeight)
 	if err != nil {
 		t.Fatalf("error waiting for height: %v", err)
