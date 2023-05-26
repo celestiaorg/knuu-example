@@ -1,15 +1,14 @@
 package celestia_app
 
 import (
-	"fmt"
 	"github.com/celestiaorg/knuu-example/celestia_app/utils"
 	"github.com/celestiaorg/knuu/pkg/knuu"
 	"os"
 	"testing"
-	"time"
 )
 
 func TestUpgrade(t *testing.T) {
+	t.Parallel()
 	// Setup
 
 	executor, err := knuu.NewExecutor()
@@ -51,27 +50,10 @@ func TestUpgrade(t *testing.T) {
 		t.Fatalf("Error waiting for instance to be running: %v", err)
 	}
 
-	validatorIP, err := validator.GetIP()
-	if err != nil {
-		t.Fatalf("Error getting validator IP: %v", err)
-	}
-
 	// Wait until validator reaches block height 1 or more
-	t.Log("Waiting for validator to reach block height 1")
-	for {
-		status, err := executor.ExecuteCommand("wget", "-q", "-O", "-", fmt.Sprintf("%s:26657/status", validatorIP))
-		if err != nil {
-			t.Fatalf("Error executing command: %v", err)
-		}
-		blockheight, err := utils.LatestBlockHeightFromStatus(status)
-		if err != nil {
-			t.Fatalf("Error getting blockheight from status: %v", err)
-		}
-		if blockheight >= 1 {
-			t.Log("Validator reached block height 1")
-			break
-		}
-		time.Sleep(1 * time.Second)
+	err = utils.WaitForHeight(executor, validator, 1)
+	if err != nil {
+		t.Fatalf("Error waiting for height: %v", err)
 	}
 
 	t.Log("Updating validator to v0.12.2")
@@ -82,34 +64,13 @@ func TestUpgrade(t *testing.T) {
 	}
 
 	// Check if blockheight is increasing, timeout after some time
-	maxWait := 1 * time.Minute
-	start := time.Now()
-	status, err := executor.ExecuteCommand("wget", "-q", "-O", "-", fmt.Sprintf("%s:26657/status", validatorIP))
+	blockHeight, err := utils.GetHeight(executor, validator)
 	if err != nil {
-		t.Fatalf("Error executing command: %v", err)
+		t.Fatalf("Error getting block height: %v", err)
 	}
-	blockHeight, err := utils.LatestBlockHeightFromStatus(status)
+	err = utils.WaitForHeight(executor, validator, blockHeight+1)
 	if err != nil {
-		t.Fatalf("Error getting blockheight from status: %v", err)
-	}
-	t.Logf("Waiting for validator blockheight to increase. Current: %d", blockHeight)
-	for {
-		if time.Since(start) > maxWait {
-			t.Error("Timeout while waiting for blockheight to increase")
-		}
-		time.Sleep(1 * time.Second)
-		status, err := executor.ExecuteCommand("wget", "-q", "-O", "-", fmt.Sprintf("%s:26657/status", validatorIP))
-		if err != nil {
-			t.Fatalf("Error executing command: %v", err)
-		}
-		newBlockHeight, err := utils.LatestBlockHeightFromStatus(status)
-		if err != nil {
-			t.Fatalf("Error getting blockheight from status: %v", err)
-		}
-		if newBlockHeight > blockHeight {
-			t.Log("Validator blockheight increased")
-			break
-		}
+		t.Fatalf("Error waiting for height: %v", err)
 	}
 
 }
