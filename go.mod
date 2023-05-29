@@ -3,7 +3,7 @@ module github.com/celestiaorg/knuu-example
 go 1.20
 
 require (
-	github.com/celestiaorg/celestia-node v0.10.0
+	github.com/celestiaorg/celestia-node v0.10.1
 	github.com/celestiaorg/knuu v0.6.0
 	github.com/sirupsen/logrus v1.9.2
 	github.com/stretchr/testify v1.8.3
@@ -33,7 +33,7 @@ require (
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/btcsuite/btcd v0.22.1 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2 // indirect
-	github.com/celestiaorg/celestia-app v0.13.0 // indirect
+	github.com/celestiaorg/celestia-app v0.13.3 // indirect
 	github.com/celestiaorg/go-fraud v0.1.0 // indirect
 	github.com/celestiaorg/go-header v0.2.7 // indirect
 	github.com/celestiaorg/go-libp2p-messenger v0.2.0 // indirect
