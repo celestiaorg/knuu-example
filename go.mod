@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/celestiaorg/celestia-node v0.10.0
-	github.com/celestiaorg/knuu v0.5.0
+	github.com/celestiaorg/knuu v0.6.0
 	github.com/sirupsen/logrus v1.9.2
 	github.com/stretchr/testify v1.8.3
 )

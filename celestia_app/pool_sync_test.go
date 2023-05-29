@@ -1,15 +1,14 @@
 package celestia_app
 
 import (
-	"fmt"
 	"github.com/celestiaorg/knuu-example/celestia_app/utils"
 	"github.com/celestiaorg/knuu/pkg/knuu"
 	"os"
 	"testing"
-	"time"
 )
 
 func TestPoolSync(t *testing.T) {
+	t.Parallel()
 	// Setup
 
 	executor, err := knuu.NewExecutor()
@@ -71,12 +70,7 @@ func TestPoolSync(t *testing.T) {
 		t.Fatalf("Error getting validator IP: %v", err)
 	}
 
-	status, err := executor.ExecuteCommand("wget", "-q", "-O", "-", fmt.Sprintf("%s:26657/status", validatorIP))
-	if err != nil {
-		t.Fatalf("Error getting status: %v", err)
-	}
-
-	id, err := utils.NodeIdFromStatus(status)
+	id, err := utils.NodeIdFromNode(executor, validator)
 	if err != nil {
 		t.Fatalf("Error getting node id: %v", err)
 	}
@@ -102,48 +96,17 @@ func TestPoolSync(t *testing.T) {
 
 	// Wait until validator reaches block height 3 or more
 	t.Log("Waiting for validator to reach block height 3")
-	for {
-		status, err := executor.ExecuteCommand("wget", "-q", "-O", "-", fmt.Sprintf("%s:26657/status", validatorIP))
-		if err != nil {
-			t.Fatalf("Error getting status: %v", err)
-		}
-		blockheightVal, err := utils.LatestBlockHeightFromStatus(status)
-		if err != nil {
-			t.Fatalf("Error getting latest block height: %v", err)
-		}
-		if blockheightVal >= 3 {
-			t.Logf("Validator reached block height 3")
-			break
-		}
-		time.Sleep(1 * time.Second)
+	err = utils.WaitForHeight(executor, validator, 3)
+	if err != nil {
+		t.Fatalf("Error waiting for validator to reach block height 3: %v", err)
 	}
 
 	// Wait until full node reaches block height 3 or more but error out if it takes too long
 	t.Log("Waiting for full nodes to reach block height 3")
-	maxWait := 5 * time.Second
-	start := time.Now()
 	for _, full := range fullNodes.Instances() {
-		for {
-			fullNodeIP, err := full.GetIP()
-			if err != nil {
-				t.Fatalf("Error getting full node IP: %v", err)
-			}
-			status, err := executor.ExecuteCommand("wget", "-q", "-O", "-", fmt.Sprintf("%s:26657/status", fullNodeIP))
-			if err != nil {
-				t.Fatalf("Error getting status: %v", err)
-			}
-			blockheightFull, err := utils.LatestBlockHeightFromStatus(status)
-			if err != nil {
-				t.Fatalf("Error getting latest block height: %v", err)
-			}
-			if blockheightFull >= 3 {
-				t.Log("Full node reached block height 3")
-				break
-			}
-			time.Sleep(1 * time.Second)
-			if time.Since(start) > maxWait {
-				t.Fatalf("Full node did not reach block height 3 in time")
-			}
+		err = utils.WaitForHeight(executor, full, 3)
+		if err != nil {
+			t.Fatalf("Error waiting for full node to reach block height 3: %v", err)
 		}
 	}
 }

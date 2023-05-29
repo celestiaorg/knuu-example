@@ -19,7 +19,7 @@ func TestBasic(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error setting image: %v", err)
 	}
-	err = instance.SetCommand([]string{"sleep", "infinity"})
+	err = instance.SetCommand("sleep", "infinity")
 	if err != nil {
 		t.Fatalf("Error setting command: %v", err)
 	}

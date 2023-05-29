@@ -2,28 +2,36 @@ package celestia_app
 
 import (
 	"context"
+	app_utils "github.com/celestiaorg/knuu-example/celestia_app/utils"
 	"github.com/celestiaorg/knuu-example/celestia_node/utils"
+	"github.com/celestiaorg/knuu/pkg/knuu"
 	"os"
 	"testing"
 )
 
 func TestBasic(t *testing.T) {
+	t.Parallel()
 	// Setup
 
+	executor, err := knuu.NewExecutor()
+	if err != nil {
+		t.Fatalf("Error creating executor: %v", err)
+	}
+
 	t.Log("Starting consensus")
-	consensus, err := utils.CreateAndStartConsensus()
+	consensus, err := app_utils.CreateAndStartConsensus(executor)
 	if err != nil {
 		t.Fatalf("Error creating and starting consensus: %v", err)
 	}
 
 	t.Log("Starting bridge")
-	bridge, err := utils.CreateAndStartBridge("bridge", consensus)
+	bridge, err := utils.CreateAndStartBridge(executor, "bridge", consensus)
 
 	t.Log("Starting full node")
-	full, err := utils.CreateAndStartNode("full", "full", consensus, bridge)
+	full, err := utils.CreateAndStartNode(executor, "full", "full", consensus, bridge)
 
 	t.Log("Starting light node")
-	light, err := utils.CreateAndStartNode("light", "light", consensus, full)
+	light, err := utils.CreateAndStartNode(executor, "light", "light", consensus, full)
 
 	t.Cleanup(func() {
 		// Cleanup
@@ -32,6 +40,10 @@ func TestBasic(t *testing.T) {
 			return
 		}
 
+		err = executor.Destroy()
+		if err != nil {
+			t.Fatalf("Error destroying executor: %v", err)
+		}
 		err = consensus.Destroy()
 		if err != nil {
 			t.Fatalf("Error destroying executor: %v", err)

@@ -2,32 +2,12 @@ package utils
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/celestiaorg/celestia-node/api/rpc/client"
+	app_utils "github.com/celestiaorg/knuu-example/celestia_app/utils"
 	"github.com/celestiaorg/knuu/pkg/knuu"
 	"github.com/sirupsen/logrus"
-	"regexp"
 )
-
-func AuthTokenFromAuth(auth string) (string, error) {
-	// Use regex to match the JWT token
-	re := regexp.MustCompile(`[A-Za-z0-9\-_=]+\.[A-Za-z0-9\-_=]+\.?[A-Za-z0-9\-_=]*`)
-	match := re.FindString(auth)
-
-	return fmt.Sprintf(match), nil
-}
-
-func IDFromP2PInfo(p2pInfo string) (string, error) {
-	var result map[string]interface{}
-	err := json.Unmarshal([]byte(p2pInfo), &result)
-	if err != nil {
-		return "", fmt.Errorf("error unmarshalling status: %w", err)
-	}
-	resultData := result["result"].(map[string]interface{})
-	id := resultData["ID"].(string)
-	return id, nil
-}
 
 func initInstance(instanceName string, nodeType string, chainId string, genesisHash string) (*knuu.Instance, error) {
 	instance, err := knuu.NewInstance(instanceName)
@@ -61,12 +41,12 @@ func initInstance(instanceName string, nodeType string, chainId string, genesisH
 	return instance, nil
 }
 
-func CreateAndStartBridge(instanceName string, consensus *knuu.Instance) (*knuu.Instance, error) {
-	chainId, err := ChainIdFromConsensus(consensus)
+func CreateAndStartBridge(executor *knuu.Executor, instanceName string, consensus *knuu.Instance) (*knuu.Instance, error) {
+	chainId, err := app_utils.ChainId(executor, consensus)
 	if err != nil {
 		return nil, fmt.Errorf("error getting chain ID: %w", err)
 	}
-	genesisHash, err := GenesisHashFromConsensus(consensus)
+	genesisHash, err := app_utils.GenesisHash(executor, consensus)
 	if err != nil {
 		return nil, fmt.Errorf("error getting genesis hash: %w", err)
 	}
@@ -79,7 +59,7 @@ func CreateAndStartBridge(instanceName string, consensus *knuu.Instance) (*knuu.
 		return nil, fmt.Errorf("error creating instance: %w", err)
 	}
 
-	err = bridge.SetCommand([]string{"celestia", "bridge", "start", "--node.store", "/home/celestia/.celestia-test", "--core.ip", consensusIP})
+	err = bridge.SetCommand("celestia", "bridge", "start", "--node.store", "/home/celestia/.celestia-test", "--core.ip", consensusIP)
 	if err != nil {
 		return nil, fmt.Errorf("error setting command: %w", err)
 	}
@@ -90,12 +70,12 @@ func CreateAndStartBridge(instanceName string, consensus *knuu.Instance) (*knuu.
 	return bridge, nil
 }
 
-func CreateAndStartNode(instanceName string, nodeType string, consensus *knuu.Instance, trustedNode *knuu.Instance) (*knuu.Instance, error) {
-	chainId, err := ChainIdFromConsensus(consensus)
+func CreateAndStartNode(executor *knuu.Executor, instanceName string, nodeType string, consensus *knuu.Instance, trustedNode *knuu.Instance) (*knuu.Instance, error) {
+	chainId, err := app_utils.ChainId(executor, consensus)
 	if err != nil {
 		return nil, fmt.Errorf("error getting chain ID: %w", err)
 	}
-	genesisHash, err := GenesisHashFromConsensus(consensus)
+	genesisHash, err := app_utils.GenesisHash(executor, consensus)
 	if err != nil {
 		return nil, fmt.Errorf("error getting genesis hash: %w", err)
 	}
@@ -109,7 +89,7 @@ func CreateAndStartNode(instanceName string, nodeType string, consensus *knuu.In
 	if err != nil {
 		logrus.Fatalf("Error getting admin auth token: %v", err)
 	}
-	adminAuthNodeToken, err := AuthTokenFromAuth(adminAuthNode)
+	adminAuthNodeToken, err := authTokenFromAuth(adminAuthNode)
 
 	p2pInfoNode, err := trustedNode.ExecuteCommand("celestia", "rpc", "p2p", "Info", "--auth", adminAuthNodeToken)
 	if err != nil {
@@ -120,13 +100,13 @@ func CreateAndStartNode(instanceName string, nodeType string, consensus *knuu.In
 	if err != nil {
 		return nil, fmt.Errorf("error getting IP: %w", err)
 	}
-	bridgeID, err := IDFromP2PInfo(p2pInfoNode)
+	bridgeID, err := iDFromP2PInfo(p2pInfoNode)
 	if err != nil {
 		return nil, fmt.Errorf("error getting ID: %w", err)
 	}
 	trustedPeers := fmt.Sprintf("/ip4/%s/tcp/2121/p2p/%s", bridgeIP, bridgeID)
 
-	err = node.SetCommand([]string{"celestia", nodeType, "start", "--node.store", "/home/celestia/.celestia-test", "--headers.trusted-peers", trustedPeers})
+	err = node.SetCommand("celestia", nodeType, "start", "--node.store", "/home/celestia/.celestia-test", "--headers.trusted-peers", trustedPeers)
 	if err != nil {
 		return nil, fmt.Errorf("error setting command: %w", err)
 	}
@@ -149,7 +129,7 @@ func GetRPCClient(node *knuu.Instance) (*client.Client, error) {
 	if err != nil {
 		logrus.Fatalf("Error getting admin auth token: %v", err)
 	}
-	adminAuthNodeToken, err := AuthTokenFromAuth(adminAuthNode)
+	adminAuthNodeToken, err := authTokenFromAuth(adminAuthNode)
 	rpcClient, err := client.NewClient(ctx, "http://"+url, adminAuthNodeToken)
 	if err != nil {
 		return nil, fmt.Errorf("error creating RPC client: %w", err)
