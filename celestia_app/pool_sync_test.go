@@ -65,18 +65,10 @@ func TestPoolSync(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error waiting for validator to be running: %v", err)
 	}
-	validatorIP, err := validator.GetIP()
+	persistentPeers, err := utils.GetPersistentPeers(executor, []*knuu.Instance{validator})
 	if err != nil {
-		t.Fatalf("Error getting validator IP: %v", err)
+		t.Fatalf("Error getting persistent peers: %v", err)
 	}
-
-	id, err := utils.NodeIdFromNode(executor, validator)
-	if err != nil {
-		t.Fatalf("Error getting node id: %v", err)
-	}
-
-	persistentPeers := id + "@" + validatorIP + ":26656"
-
 	err = full.SetArgs("start", "--home=/root/.celestia-app", "--rpc.laddr=tcp://0.0.0.0:26657", "--p2p.persistent_peers", persistentPeers)
 	if err != nil {
 		t.Fatalf("Error setting args: %v", err)

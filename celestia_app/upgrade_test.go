@@ -20,6 +20,10 @@ func TestUpgrade(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error cloning instance: %v", err)
 	}
+	err = validator.AddVolume("/root/.celestia-app", "1Gi")
+	if err != nil {
+		t.Fatalf("Error adding volume: %v", err)
+	}
 
 	t.Cleanup(func() {
 		// Cleanup
