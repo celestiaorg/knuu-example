@@ -1,0 +1,34 @@
+name: Knuu Testing
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Go 1.20.5
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.20.5
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Setup kubeconfig
+        env:
+          KUBECONFIG_FILE: ${{ secrets.KNUU_KUBECONFIG_FILE }}
+        run: |
+          echo "${KUBECONFIG_FILE}" > $HOME/.kube/config
+
+      - name: Run Tests
+        run: go test -v ./...
+        env:
+          KNUU_NAMESPACE: "test"
+          KNUU_SKIP_CLEANUP: "false"
