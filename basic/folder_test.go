@@ -29,7 +29,7 @@ func TestFolder(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error executing command '%v':", err)
 	}
-	err = web.AddFile("resources/html", "/usr/share/nginx/html", "0:0")
+	err = web.AddFolder("resources/html", "/usr/share/nginx/html", "0:0")
 	if err != nil {
 		t.Fatalf("Error adding file '%v':", err)
 	}
