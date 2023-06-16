@@ -3,7 +3,6 @@ package utils
 import (
 	"fmt"
 	"github.com/celestiaorg/knuu/pkg/knuu"
-	"github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -123,11 +122,27 @@ func GenesisHash(executor *knuu.Executor, app *knuu.Instance) (string, error) {
 	}
 	block, err := executor.ExecuteCommand("wget", "-q", "-O", "-", fmt.Sprintf("%s:26657/block?height=1", appIP))
 	if err != nil {
-		logrus.Fatalf("Error getting block: %v", err)
+		return "", fmt.Errorf("error getting block: %v", err)
 	}
 	genesisHash, err := hashFromBlock(block)
 	if err != nil {
-		logrus.Fatalf("Error getting hash from block: %v", err)
+		return "", fmt.Errorf("error getting hash from block: %v", err)
 	}
 	return genesisHash, nil
+}
+
+func GetPersistentPeers(executor *knuu.Executor, apps []*knuu.Instance) (string, error) {
+	var persistentPeers string
+	for _, app := range apps {
+		validatorIP, err := app.GetIP()
+		if err != nil {
+			return "", fmt.Errorf("error getting validator IP: %v", err)
+		}
+		id, err := NodeIdFromNode(executor, app)
+		if err != nil {
+			return "", fmt.Errorf("error getting node id: %v", err)
+		}
+		persistentPeers += id + "@" + validatorIP + ":26656" + ","
+	}
+	return persistentPeers[:len(persistentPeers)-1], nil
 }

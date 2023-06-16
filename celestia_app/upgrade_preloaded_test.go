@@ -7,26 +7,46 @@ import (
 	"testing"
 )
 
-func TestUpgrade(t *testing.T) {
+var imageToUpgrade = "ghcr.io/celestiaorg/celestia-app:v0.12.2"
+
+func TestUpgradePreloaded(t *testing.T) {
 	t.Parallel()
 	// Setup
+
+	t.Log("test")
 
 	executor, err := knuu.NewExecutor()
 	if err != nil {
 		t.Fatalf("Error creating executor: %v", err)
 	}
 
+	preloader, err := knuu.NewPreloader()
+	if err != nil {
+		t.Fatalf("Error creating preloader: %v", err)
+	}
+	err = preloader.AddImage(imageToUpgrade)
+	if err != nil {
+		t.Fatalf("Error adding preloaded image: %v", err)
+	}
+
+	preloadedImages := preloader.Images()
+	t.Log("Preloaded images:")
+	for _, image := range preloadedImages {
+		t.Logf("- %v", image)
+	}
+
 	validator, err := Instances["validator"].Clone()
 	if err != nil {
 		t.Fatalf("Error cloning instance: %v", err)
 	}
-	err = validator.AddVolume("/root/.celestia-app", "1Gi")
-	if err != nil {
-		t.Fatalf("Error adding volume: %v", err)
-	}
 
 	t.Cleanup(func() {
 		// Cleanup
+		err = preloader.EmptyImages()
+		if err != nil {
+			t.Fatalf("Error emptying preloaded images: %v", err)
+		}
+
 		if os.Getenv("KNUU_SKIP_CLEANUP") == "true" {
 			t.Log("Skipping cleanup")
 			return
@@ -60,9 +80,9 @@ func TestUpgrade(t *testing.T) {
 		t.Fatalf("Error waiting for height: %v", err)
 	}
 
-	t.Log("Updating validator to v0.12.2")
+	t.Log("Updating validator")
 
-	err = validator.SetImage("ghcr.io/celestiaorg/celestia-app:v0.12.2")
+	err = validator.SetImageInstant(imageToUpgrade)
 	if err != nil {
 		t.Fatalf("Error setting image: %v", err)
 	}
