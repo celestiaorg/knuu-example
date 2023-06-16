@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestFile(t *testing.T) {
+func TestFolder(t *testing.T) {
 	t.Parallel()
 	// Setup
 
@@ -29,7 +29,7 @@ func TestFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error executing command '%v':", err)
 	}
-	err = web.AddFile("resources/html/index.html", "/usr/share/nginx/html/index.html", "0:0")
+	err = web.AddFile("resources/html", "/usr/share/nginx/html", "0:0")
 	if err != nil {
 		t.Fatalf("Error adding file '%v':", err)
 	}
