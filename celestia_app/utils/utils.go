@@ -68,7 +68,7 @@ func WaitForHeight(executor *knuu.Executor, app *knuu.Instance, height int64) er
 			var blockHeight int64
 			var err error
 			for retries := 0; retries < maxRetries; retries++ {
-				status, err := executor.ExecuteCommand("wget", "-q", "-O", "-", fmt.Sprintf("%s:26657/status", appIP))
+				status, err := executor.ExecuteCommand("wget", "-q", "-O", "--timeout=60", "-", fmt.Sprintf("%s:26657/status", appIP))
 				if err != nil {
 					return fmt.Errorf("error executing command: %w", err)
 				}
