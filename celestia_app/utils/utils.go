@@ -16,12 +16,21 @@ func (e *JSONRPCError) Error() string {
 	return fmt.Sprintf("JSONRPC Error - Code: %d, Message: %s, Data: %s", e.Code, e.Message, e.Data)
 }
 
-func NodeIdFromNode(executor *knuu.Executor, node *knuu.Instance) (string, error) {
-	nodeIP, err := node.GetIP()
+// getStatus returns the status of the node
+func getStatus(executor *knuu.Executor, app *knuu.Instance) (string, error) {
+	nodeIP, err := app.GetIP()
 	if err != nil {
 		return "", fmt.Errorf("error getting node ip: %w", err)
 	}
 	status, err := executor.ExecuteCommand("wget", "-q", "-O", "-", fmt.Sprintf("%s:26657/status", nodeIP))
+	if err != nil {
+		return "", fmt.Errorf("error executing command: %w", err)
+	}
+	return status, nil
+}
+
+func NodeIdFromNode(executor *knuu.Executor, node *knuu.Instance) (string, error) {
+	status, err := getStatus(executor, node)
 	if err != nil {
 		return "", fmt.Errorf("error getting status: %v", err)
 	}
@@ -34,13 +43,9 @@ func NodeIdFromNode(executor *knuu.Executor, node *knuu.Instance) (string, error
 }
 
 func GetHeight(executor *knuu.Executor, app *knuu.Instance) (int64, error) {
-	appIP, err := app.GetIP()
+	status, err := getStatus(executor, app)
 	if err != nil {
-		return 0, fmt.Errorf("error getting app ip: %w", err)
-	}
-	status, err := executor.ExecuteCommand("wget", "-q", "-O", "-", fmt.Sprintf("%s:26657/status", appIP))
-	if err != nil {
-		return 0, fmt.Errorf("error executing command: %w", err)
+		return 0, fmt.Errorf("error getting status: %v", err)
 	}
 	blockHeight, err := latestBlockHeightFromStatus(status)
 	if err != nil {
@@ -55,24 +60,22 @@ func WaitForHeight(executor *knuu.Executor, app *knuu.Instance, height int64) er
 
 	maxRetries := 5
 
-	appIP, err := app.GetIP()
-	if err != nil {
-		return fmt.Errorf("error getting app ip: %w", err)
-	}
-
 	for {
 		select {
 		case <-timeout:
-			return fmt.Errorf("timeout waiting for the first block")
+			return fmt.Errorf("timeout waiting for height %d", height)
 		case <-tick:
 			var blockHeight int64
 			var err error
 			for retries := 0; retries < maxRetries; retries++ {
-				status, err := executor.ExecuteCommand("wget", "-q", "-O", "-", fmt.Sprintf("%s:26657/status", appIP))
+				status, err := getStatus(executor, app)
 				if err != nil {
-					return fmt.Errorf("error executing command: %w", err)
+					return fmt.Errorf("error getting status: %v", err)
 				}
 				blockHeight, err = latestBlockHeightFromStatus(status)
+				if err != nil {
+					return fmt.Errorf("error getting block height: %w", err)
+				}
 				if err != nil {
 					if _, ok := err.(*JSONRPCError); !ok {
 						// If the error is not a JSONRPCError, stop and return it
@@ -99,14 +102,9 @@ func WaitForHeight(executor *knuu.Executor, app *knuu.Instance, height int64) er
 }
 
 func ChainId(executor *knuu.Executor, app *knuu.Instance) (string, error) {
-	appIP, err := app.GetIP()
+	status, err := getStatus(executor, app)
 	if err != nil {
-		return "", fmt.Errorf("error getting app ip: %w", err)
-	}
-
-	status, err := executor.ExecuteCommand("wget", "-q", "-O", "-", fmt.Sprintf("%s:26657/status", appIP))
-	if err != nil {
-		return "", fmt.Errorf("error executing command: %w", err)
+		return "", fmt.Errorf("error getting status: %v", err)
 	}
 	chainId, err := chainIdFromStatus(status)
 	if err != nil {
