@@ -39,17 +39,21 @@ func TestUpgradePreloaded(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error cloning instance: %v", err)
 	}
+	err = validator.AddVolume("/root/.celestia-app", "1Gi")
+	if err != nil {
+		t.Fatalf("Error adding volume: %v", err)
+	}
 
 	t.Cleanup(func() {
 		// Cleanup
-		err = preloader.EmptyImages()
-		if err != nil {
-			t.Fatalf("Error emptying preloaded images: %v", err)
-		}
-
 		if os.Getenv("KNUU_SKIP_CLEANUP") == "true" {
 			t.Log("Skipping cleanup")
 			return
+		}
+
+		err = preloader.EmptyImages()
+		if err != nil {
+			t.Fatalf("Error emptying preloaded images: %v", err)
 		}
 
 		err = executor.Destroy()
