@@ -7,6 +7,8 @@ require (
 	github.com/celestiaorg/knuu v0.7.2
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.4
+	k8s.io/api v0.27.3
+	k8s.io/apimachinery v0.27.3
 )
 
 require (
@@ -317,8 +319,6 @@ require (
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/api v0.27.3 // indirect
-	k8s.io/apimachinery v0.27.3 // indirect
 	k8s.io/client-go v0.27.3 // indirect
 	k8s.io/klog/v2 v2.100.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20230501164219-8b0f38b5fd1f // indirect
@@ -331,7 +331,7 @@ require (
 )
 
 replace (
-	github.com/celestiaorg/knuu => github.com/celestiaorg/knuu v0.7.3-0.20230703124206-d16211a96b1e
+	github.com/celestiaorg/knuu => github.com/celestiaorg/knuu v0.7.3-0.20230705130243-6afb2707d9e1
 	github.com/cosmos/cosmos-sdk => github.com/celestiaorg/cosmos-sdk v1.8.0-sdk-v0.46.7
 	github.com/filecoin-project/dagstore => github.com/celestiaorg/dagstore v0.0.0-20230413141458-735ab09a15d6
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1

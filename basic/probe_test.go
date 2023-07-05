@@ -1,9 +1,10 @@
 package basic
 
 import (
-	"github.com/celestiaorg/knuu/pkg/k8s"
 	"github.com/celestiaorg/knuu/pkg/knuu"
 	"github.com/stretchr/testify/assert"
+	v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	"os"
 	"testing"
 )
@@ -34,15 +35,16 @@ func TestProbe(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error adding file '%v':", err)
 	}
-	httpGetAction := k8s.HTTPGetAction{
-		Path: "/",
-		Port: 80,
-	}
-	readinessProbe := k8s.Probe{
-		HTTPGet:             &httpGetAction,
+	livenessProbe := v1.Probe{
+		ProbeHandler: v1.ProbeHandler{
+			HTTPGet: &v1.HTTPGetAction{
+				Path: "/",
+				Port: intstr.IntOrString{Type: intstr.Int, IntVal: 80},
+			},
+		},
 		InitialDelaySeconds: 10,
 	}
-	err = web.SetReadinessProbe(&readinessProbe)
+	err = web.SetLivenessProbe(&livenessProbe)
 	if err != nil {
 		t.Fatalf("Error setting readiness probe '%v':", err)
 	}
