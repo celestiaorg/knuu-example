@@ -3,6 +3,7 @@ package basic
 import (
 	"github.com/celestiaorg/knuu/pkg/knuu"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
 )
@@ -82,17 +83,22 @@ func TestSidecar(t *testing.T) {
 		t.Fatalf("Error getting IP '%v':", err)
 	}
 
+	require.Error(t, sidecar.Start())
 	if err := web.Start(); err != nil {
 		t.Fatalf("Error starting instance: %v", err)
 	}
-	if err := web.WaitInstanceIsRunning(); err != nil {
-		t.Fatalf("Error waiting for instance to be running: %v", err)
-	}
 
-	wget, err := executor.ExecuteCommand("wget", "-q", "-O", "-", webIP)
+	wgetExecutor, err := executor.ExecuteCommand("wget", "-q", "-O", "-", webIP)
 	if err != nil {
 		t.Fatalf("Error executing command '%v':", err)
 	}
 
-	assert.Equal(t, wget, "Hello World!\n")
+	assert.Equal(t, wgetExecutor, "Hello World!\n")
+
+	wgetSidecar, err := sidecar.ExecuteCommand("wget", "-q", "-O", "-", webIP)
+	if err != nil {
+		t.Fatalf("Error executing command '%v':", err)
+	}
+
+	assert.Equal(t, wgetSidecar, "Hello World!\n")
 }
