@@ -331,7 +331,7 @@ require (
 )
 
 replace (
-	github.com/celestiaorg/knuu => /home/samuel/git/celestiaorg/knuu/branches/feature/add-otel-agent-fr
+	github.com/celestiaorg/knuu => github.com/celestiaorg/knuu v0.8.3-0.20230821081229-cbde0a778f1a
 	github.com/cosmos/cosmos-sdk => github.com/celestiaorg/cosmos-sdk v1.8.0-sdk-v0.46.7
 	github.com/filecoin-project/dagstore => github.com/celestiaorg/dagstore v0.0.0-20230413141458-735ab09a15d6
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
