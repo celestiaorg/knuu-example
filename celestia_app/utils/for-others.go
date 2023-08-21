@@ -10,7 +10,7 @@ func CreateAndStartConsensus(executor *knuu.Executor) (*knuu.Instance, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error creating instance: %w", err)
 	}
-	err = consensus.SetImage("ghcr.io/celestiaorg/celestia-app:v0.13.2")
+	err = consensus.SetImage("ghcr.io/celestiaorg/celestia-app:v1.0.0-rc6")
 	if err != nil {
 		return nil, fmt.Errorf("error setting image: %w", err)
 	}
@@ -30,7 +30,7 @@ func CreateAndStartConsensus(executor *knuu.Executor) (*knuu.Instance, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error executing command: %w", err)
 	}
-	err = consensus.SetArgs("start", "--home=/root/.celestia-app", "--rpc.laddr=tcp://0.0.0.0:26657")
+	err = consensus.SetArgs("start", "--home=/home/celestia/.celestia-app", "--rpc.laddr=tcp://0.0.0.0:26657")
 	if err != nil {
 		return nil, fmt.Errorf("error setting args: %w", err)
 	}
