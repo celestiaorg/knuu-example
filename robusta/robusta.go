@@ -10,6 +10,8 @@ const (
 	nodeVersion  = "v0.11.0-rc13"
 	txSimVersion = "a9e2acd"
 	seed         = 42 // the meaning of life
+
+	observabilityEnabled = false
 )
 
 var (

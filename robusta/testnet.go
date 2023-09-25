@@ -177,14 +177,10 @@ func (t *Testnet) Setup() error {
 	}
 
 	for _, daNode := range t.daNodes {
-		log.Info().Str("name", daNode.Name).Msg("Initializing node")
-
 		err = daNode.Init()
 		if err != nil {
 			return err
 		}
-
-		log.Info().Str("name", daNode.Name).Msg("Initialized node")
 	}
 
 	if t.Txsim != nil {
@@ -220,31 +216,25 @@ func (t *Testnet) Start() error {
 		}
 	}
 	for _, node := range genesisNodes {
-		log.Info().Str("name", node.Name).Msg("Starting node")
 		err := node.Start()
 		if err != nil {
 			return fmt.Errorf("node %s failed to start: %w", node.Name, err)
 		}
-		log.Info().Str("name", node.Name).Msg("Started node")
 	}
 	for _, node := range t.nodes {
 		if node.StartHeight > 0 {
-			log.Info().Str("name", node.Name).Msg("Starting node")
 			err := node.Start()
 			if err != nil {
 				return fmt.Errorf("node %s failed to start: %w", node.Name, err)
 			}
-			log.Info().Str("name", node.Name).Msg("Started node")
 		}
 	}
 
 	for _, daNode := range t.daNodes {
-		log.Info().Str("name", daNode.Name).Msg("Starting node")
 		err := daNode.Start()
 		if err != nil {
 			return fmt.Errorf("node %s failed to start: %w", daNode.Name, err)
 		}
-		log.Info().Str("name", daNode.Name).Msg("Started node")
 	}
 
 	if t.Txsim != nil {

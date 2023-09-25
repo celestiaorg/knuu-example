@@ -112,20 +112,23 @@ func NewDaNode(
 	if err != nil {
 		return nil, err
 	}
-	if err := instance.SetOtelEndpoint(4318); err != nil {
-		return nil, err
-	}
-	if err := instance.SetPrometheusEndpoint(8890, fmt.Sprintf("knuu-%s", knuu.Identifier()), "1m"); err != nil {
-		return nil, err
-	}
-	if err := instance.SetJaegerEndpoint(14250, 6831, 14268); err != nil {
-		return nil, err
-	}
-	if err := instance.SetOtlpExporter(grafanaEndpoint, grafanaUsername, grafanaToken); err != nil {
-		return nil, err
-	}
-	if err := instance.SetJaegerExporter("jaeger-collector.jaeger-cluster.svc.cluster.local:14250"); err != nil {
-		return nil, err
+
+	if observabilityEnabled {
+		if err := instance.SetOtelEndpoint(4318); err != nil {
+			return nil, err
+		}
+		if err := instance.SetPrometheusEndpoint(8890, fmt.Sprintf("knuu-%s", knuu.Identifier()), "1m"); err != nil {
+			return nil, err
+		}
+		if err := instance.SetJaegerEndpoint(14250, 6831, 14268); err != nil {
+			return nil, err
+		}
+		if err := instance.SetOtlpExporter(grafanaEndpoint, grafanaUsername, grafanaToken); err != nil {
+			return nil, err
+		}
+		if err := instance.SetJaegerExporter("jaeger-collector.jaeger-cluster.svc.cluster.local:14250"); err != nil {
+			return nil, err
+		}
 	}
 
 	consensusIP, err := consensusNode.Instance.GetIP()
@@ -133,19 +136,28 @@ func NewDaNode(
 		return nil, err
 	}
 
+	commonArgs := []string{
+		"celestia",
+		nodeType.String(),
+		"start",
+		"--node.store", daNodeRemoteRootDir,
+		"--core.ip", consensusIP,
+	}
+
+	observabilityArgs := []string{
+		"--metrics",
+		"--metrics.tls=false",
+		"--p2p.metrics",
+		"--tracing",
+		"--tracing.tls=false",
+	}
+
+	if observabilityEnabled {
+		commonArgs = append(commonArgs, observabilityArgs...)
+	}
+
 	if len(trustedPeers) == 0 {
-		err = instance.SetCommand(
-			"celestia",
-			nodeType.String(),
-			"start",
-			"--node.store", daNodeRemoteRootDir,
-			"--core.ip", consensusIP,
-			"--metrics",
-			"--metrics.tls=false",
-			"--p2p.metrics",
-			"--tracing",
-			"--tracing.tls=false",
-		)
+		err = instance.SetCommand(commonArgs...)
 		if err != nil {
 			return nil, err
 		}
@@ -176,18 +188,10 @@ func NewDaNode(
 			trustedPeersArray = append(trustedPeersArray, fmt.Sprintf("/ip4/%s/tcp/2121/p2p/%s", peerIP, peerID))
 		}
 
-		err = instance.SetCommand(
-			"celestia",
-			nodeType.String(),
-			"start",
-			"--node.store", daNodeRemoteRootDir,
-			"--headers.trusted-peers", strings.Join(trustedPeersArray, ","),
-			"--metrics",
-			"--metrics.tls=false",
-			"--p2p.metrics",
-			"--tracing",
-			"--tracing.tls=false",
-		)
+		trustedPeersString := strings.Join(trustedPeersArray, ",")
+		commonArgs = append(commonArgs, "--headers.trusted-peers", trustedPeersString)
+
+		err = instance.SetCommand(commonArgs...)
 		if err != nil {
 			return nil, err
 		}
