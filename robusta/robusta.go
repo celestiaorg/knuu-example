@@ -29,17 +29,19 @@ func main() {
 		panic(err)
 	}
 
-	grafanaEndpoint = os.Getenv("GRAFANA_ENDPOINT")
-	if grafanaEndpoint == "" {
-		log.Fatal().Msg("GRAFANA_ENDPOINT env var must be set")
-	}
-	grafanaUsername = os.Getenv("GRAFANA_USERNAME")
-	if grafanaUsername == "" {
-		log.Fatal().Msg("GRAFANA_USERNAME env var must be set")
-	}
-	grafanaToken = os.Getenv("GRAFANA_TOKEN")
-	if grafanaToken == "" {
-		log.Fatal().Msg("GRAFANA_TOKEN env var must be set")
+	if observabilityEnabled {
+		grafanaEndpoint = os.Getenv("GRAFANA_ENDPOINT")
+		if grafanaEndpoint == "" {
+			log.Fatal().Msg("GRAFANA_ENDPOINT env var must be set")
+		}
+		grafanaUsername = os.Getenv("GRAFANA_USERNAME")
+		if grafanaUsername == "" {
+			log.Fatal().Msg("GRAFANA_USERNAME env var must be set")
+		}
+		grafanaToken = os.Getenv("GRAFANA_TOKEN")
+		if grafanaToken == "" {
+			log.Fatal().Msg("GRAFANA_TOKEN env var must be set")
+		}
 	}
 
 	_, err = testnet.CreateGenesisNodes(2, appVersion, 10000000)
