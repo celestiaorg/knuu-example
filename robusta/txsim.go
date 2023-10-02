@@ -140,29 +140,6 @@ func (ts *Txsim) Init() error {
 		}
 	}
 
-	//// Create and write the config file
-	//cfg, err := MakeConfig(n)
-	//if err != nil {
-	//	return fmt.Errorf("making config: %w", err)
-	//}
-	//configFilePath := filepath.Join(nodeDir, "config", "config.toml")
-	//config.WriteConfigFile(configFilePath, cfg)
-	//
-	//// Store the genesis file
-	//genesisFilePath := filepath.Join(nodeDir, "config", "genesis.json")
-	//err = genesis.SaveAs(genesisFilePath)
-	//if err != nil {
-	//	return fmt.Errorf("saving genesis: %w", err)
-	//}
-	//
-	//// Create the app.toml file
-	//appConfig, err := MakeAppConfig(n)
-	//if err != nil {
-	//	return fmt.Errorf("making app config: %w", err)
-	//}
-	//appConfigFilePath := filepath.Join(nodeDir, "config", "app.toml")
-	//serverconfig.WriteConfigFile(appConfigFilePath, appConfig)
-
 	// Store the node key for the p2p handshake
 	nodeKeyFilePath := filepath.Join(nodeDir, "config", "node_key.json")
 	err := (&p2p.NodeKey{PrivKey: ts.NetworkKey}).SaveAs(nodeKeyFilePath)
@@ -180,27 +157,6 @@ func (ts *Txsim) Init() error {
 	pvStatePath := filepath.Join(nodeDir, "data", "priv_validator_state.json")
 	(privval.NewFilePV(ts.SignerKey, pvKeyPath, pvStatePath)).Save()
 
-	//addrBookFile := filepath.Join(nodeDir, "config", "addrbook.json")
-	//err = WriteAddressBook(peers, addrBookFile)
-	//if err != nil {
-	//	return fmt.Errorf("writing address book: %w", err)
-	//}
-
-	//err = n.Instance.AddFile(configFilePath, filepath.Join(remoteRootDir, "config", "config.toml"), "10001:10001")
-	//if err != nil {
-	//	return fmt.Errorf("adding config file: %w", err)
-	//}
-	//
-	//err = n.Instance.AddFile(genesisFilePath, filepath.Join(remoteRootDir, "config", "genesis.json"), "10001:10001")
-	//if err != nil {
-	//	return fmt.Errorf("adding genesis file: %w", err)
-	//}
-	//
-	//err = n.Instance.AddFile(appConfigFilePath, filepath.Join(remoteRootDir, "config", "app.toml"), "10001:10001")
-	//if err != nil {
-	//	return fmt.Errorf("adding app config file: %w", err)
-	//}
-
 	err = ts.Instance.AddFile(pvKeyPath, filepath.Join(remoteRootDir, "config", "priv_validator_key.json"), "10001:10001")
 	if err != nil {
 		return fmt.Errorf("adding priv_validator_key file: %w", err)
@@ -215,11 +171,6 @@ func (ts *Txsim) Init() error {
 	if err != nil {
 		return fmt.Errorf("adding node_key file: %w", err)
 	}
-
-	//err = n.Instance.AddFile(addrBookFile, filepath.Join(remoteRootDir, "config", "addrbook.json"), "10001:10001")
-	//if err != nil {
-	//	return fmt.Errorf("adding addrbook file: %w", err)
-	//}
 
 	return nil
 }
