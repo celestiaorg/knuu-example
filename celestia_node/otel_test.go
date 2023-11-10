@@ -13,6 +13,11 @@ func TestOtel(t *testing.T) {
 	t.Parallel()
 	// Setup
 
+	grafanaEndpoint := os.Getenv("GRAFANA_ENDPOINT")
+	if grafanaEndpoint == "" {
+		t.Fatal("GRAFANA_ENDPOINT env var must be set")
+	}
+
 	grafanaUsername := os.Getenv("GRAFANA_USERNAME")
 	if grafanaUsername == "" {
 		t.Fatal("GRAFANA_USERNAME env var must be set")
@@ -44,7 +49,7 @@ func TestOtel(t *testing.T) {
 	if err := bridge.SetJaegerEndpoint(14250, 6831, 14268); err != nil {
 		t.Fatalf("Error setting jaeger endpoint: %v", err)
 	}
-	if err := bridge.SetOtlpExporter("https://otlp-gateway-prod-us-central-0.grafana.net/otlp", grafanaUsername, grafanaToken); err != nil {
+	if err := bridge.SetOtlpExporter(grafanaEndpoint, grafanaUsername, grafanaToken); err != nil {
 		t.Fatalf("Error setting otlp exporter: %v", err)
 	}
 	if err := bridge.SetJaegerExporter("jaeger-collector.jaeger-cluster.svc.cluster.local:14250"); err != nil {
@@ -65,7 +70,7 @@ func TestOtel(t *testing.T) {
 	if err := full.SetJaegerEndpoint(14250, 6831, 14268); err != nil {
 		t.Fatalf("Error setting jaeger endpoint: %v", err)
 	}
-	if err := full.SetOtlpExporter("https://otlp-gateway-prod-us-central-0.grafana.net/otlp", grafanaUsername, grafanaToken); err != nil {
+	if err := full.SetOtlpExporter(grafanaEndpoint, grafanaUsername, grafanaToken); err != nil {
 		t.Fatalf("Error setting otlp exporter: %v", err)
 	}
 	if err := full.SetJaegerExporter("jaeger-collector.jaeger-cluster.svc.cluster.local:14250"); err != nil {
@@ -86,7 +91,7 @@ func TestOtel(t *testing.T) {
 	if err := light.SetJaegerEndpoint(14250, 6831, 14268); err != nil {
 		t.Fatalf("Error setting jaeger endpoint: %v", err)
 	}
-	if err := light.SetOtlpExporter("https://otlp-gateway-prod-us-central-0.grafana.net/otlp", grafanaUsername, grafanaToken); err != nil {
+	if err := light.SetOtlpExporter(grafanaEndpoint, grafanaUsername, grafanaToken); err != nil {
 		t.Fatalf("Error setting otlp exporter: %v", err)
 	}
 	if err := light.SetJaegerExporter("jaeger-collector.jaeger-cluster.svc.cluster.local:14250"); err != nil {
