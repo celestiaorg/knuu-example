@@ -40,11 +40,11 @@ func TestNetworking(t *testing.T) {
 
 		err = validator.Destroy()
 		if err != nil {
-			t.Fatalf("Error destroying instance: %v", err)
+			t.Fatalf("Error destroying validator: %v", err)
 		}
 		err = full.Destroy()
 		if err != nil {
-			t.Fatalf("Error destroying instance: %v", err)
+			t.Fatalf("Error destroying full: %v", err)
 		}
 	})
 
@@ -68,7 +68,7 @@ func TestNetworking(t *testing.T) {
 		t.Fatalf("Error getting node id: %v", err)
 	}
 	persistentPeers := id + "@" + validatorIP + ":26656"
-	err = full.SetArgs("start", "--home=/root/.celestia-app", "--rpc.laddr=tcp://0.0.0.0:26657", "--p2p.persistent_peers", persistentPeers)
+	err = full.SetArgs("start", "--rpc.laddr=tcp://0.0.0.0:26657", "--minimum-gas-prices=0.1utia", "--p2p.persistent_peers", persistentPeers)
 	if err != nil {
 		t.Fatalf("Error setting args: %v", err)
 	}
