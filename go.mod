@@ -344,7 +344,7 @@ require (
 )
 
 replace (
-	github.com/celestiaorg/knuu => github.com/celestiaorg/knuu v0.10.1-0.20231127152436-717b8b2061d2
+	github.com/celestiaorg/knuu => github.com/celestiaorg/knuu v0.10.1-0.20231127155557-1d6b5b8b6ddc
 	github.com/cosmos/cosmos-sdk => github.com/celestiaorg/cosmos-sdk v1.18.0-sdk-v0.46.14
 	github.com/filecoin-project/dagstore => github.com/celestiaorg/dagstore v0.0.0-20230824094345-537c012aa403
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
