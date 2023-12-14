@@ -16,6 +16,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const (
+	iperfImage  = "docker.io/clearlinux/iperf:latest"
+	gopingImage = "ghcr.io/celestiaorg/goping:1cc7b33"
+)
+
 func TestBittwister_Bandwidth(t *testing.T) {
 	t.Parallel()
 	// Setup
@@ -30,7 +35,7 @@ func TestBittwister_Bandwidth(t *testing.T) {
 	require.NoError(t, err, "Error creating instance")
 
 	require.NoError(t, iperfMother.EnableBitTwister(), "Error enabling BitTwister")
-	err = iperfMother.SetImage("docker.io/clearlinux/iperf:latest")
+	err = iperfMother.SetImage(iperfImage)
 	require.NoError(t, err, "Error setting image")
 
 	err = iperfMother.SetCommand("iperf3", "-s")
@@ -172,7 +177,7 @@ func TestBittwister_Packetloss(t *testing.T) {
 	require.NoError(t, err, "Error creating instance")
 
 	require.NoError(t, mother.EnableBitTwister(), "Error enabling BitTwister")
-	err = mother.SetImage("goping-server:latest")
+	err = mother.SetImage(gopingImage)
 	require.NoError(t, err, "Error setting image")
 
 	gopingPort := 8001
@@ -310,7 +315,7 @@ func TestBittwister_Latency(t *testing.T) {
 	require.NoError(t, err, "Error creating instance")
 
 	require.NoError(t, mother.EnableBitTwister(), "Error enabling BitTwister")
-	err = mother.SetImage("goping-server:latest")
+	err = mother.SetImage(gopingImage)
 	require.NoError(t, err, "Error setting image")
 
 	gopingPort := 8001
@@ -466,7 +471,7 @@ func TestBittwister_Jitter(t *testing.T) {
 	require.NoError(t, err, "Error creating instance")
 
 	require.NoError(t, mother.EnableBitTwister(), "Error enabling BitTwister")
-	err = mother.SetImage("goping-server:latest")
+	err = mother.SetImage(gopingImage)
 	require.NoError(t, err, "Error setting image")
 
 	gopingPort := 8001
