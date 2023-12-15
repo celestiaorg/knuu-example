@@ -18,7 +18,7 @@ import (
 
 const (
 	iperfImage  = "docker.io/clearlinux/iperf:latest"
-	gopingImage = "ghcr.io/celestiaorg/goping:1cc7b33"
+	gopingImage = "ghcr.io/celestiaorg/goping:4803195"
 )
 
 func TestBittwister_Bandwidth(t *testing.T) {
@@ -67,17 +67,10 @@ func TestBittwister_Bandwidth(t *testing.T) {
 
 	require.NoError(t, iperfServer.EnableBitTwister(), "Error enabling BitTwister")
 	require.NoError(t, iperfServer.Start(), "Error starting iperf-server instance")
-	require.NoError(t, iperfServer.WaitInstanceIsRunning(), "Error waiting for iperf-server instance to be running")
 
-	// Forward the port to the local machine
-	fwdBtPort, err := iperfServer.PortForwardTCP(iperfServer.BitTwister.Port())
-	require.NoError(t, err, "Error port forwarding")
-	iperfServer.BitTwister.SetPort(fwdBtPort)
-	iperfServer.BitTwister.SetNewClientByIPAddr("http://localhost")
-	t.Logf("BitTwister listening on http://localhost:%d", fwdBtPort)
+	forwardBitTwisterPort(t, iperfServer)
 
 	require.NoError(t, iperfClient.Start(), "Error starting iperf-client instance")
-	require.NoError(t, iperfClient.WaitInstanceIsRunning(), "Error waiting for iperf-client instance to be running")
 
 	// Perform the test
 
@@ -181,11 +174,12 @@ func TestBittwister_Packetloss(t *testing.T) {
 	require.NoError(t, err, "Error setting image")
 
 	gopingPort := 8001
-	err = mother.SetEnvironmentVariable("SERVE_ADDR", fmt.Sprintf("0.0.0.0:%d", gopingPort))
-	require.NoError(t, err, "Error setting environment variable")
 
 	require.NoError(t, mother.AddPortTCP(gopingPort), "Error adding port")
 	require.NoError(t, mother.Commit(), "Error committing instance")
+
+	err = mother.SetEnvironmentVariable("SERVE_ADDR", fmt.Sprintf("0.0.0.0:%d", gopingPort))
+	require.NoError(t, err, "Error setting environment variable")
 
 	target, err := mother.CloneWithName("target")
 	require.NoError(t, err, "Error cloning instance")
@@ -207,17 +201,10 @@ func TestBittwister_Packetloss(t *testing.T) {
 
 	require.NoError(t, target.EnableBitTwister(), "Error enabling BitTwister")
 	require.NoError(t, target.Start(), "Error starting target instance")
-	require.NoError(t, target.WaitInstanceIsRunning(), "Error waiting for target instance to be running")
 
-	// Forward the port to the local machine
-	fwdBtPort, err := target.PortForwardTCP(target.BitTwister.Port())
-	require.NoError(t, err, "Error port forwarding")
-	target.BitTwister.SetPort(fwdBtPort)
-	target.BitTwister.SetNewClientByIPAddr("http://localhost")
-	t.Logf("BitTwister listening on http://localhost:%d", fwdBtPort)
+	forwardBitTwisterPort(t, target)
 
 	require.NoError(t, executor.Start(), "Error starting executor instance")
-	require.NoError(t, executor.WaitInstanceIsRunning(), "Error waiting for executor instance to be running")
 
 	// Perform the test
 
@@ -319,11 +306,12 @@ func TestBittwister_Latency(t *testing.T) {
 	require.NoError(t, err, "Error setting image")
 
 	gopingPort := 8001
-	err = mother.SetEnvironmentVariable("SERVE_ADDR", fmt.Sprintf("0.0.0.0:%d", gopingPort))
-	require.NoError(t, err, "Error setting environment variable")
 
 	require.NoError(t, mother.AddPortTCP(gopingPort), "Error adding port")
 	require.NoError(t, mother.Commit(), "Error committing instance")
+
+	err = mother.SetEnvironmentVariable("SERVE_ADDR", fmt.Sprintf("0.0.0.0:%d", gopingPort))
+	require.NoError(t, err, "Error setting environment variable")
 
 	target, err := mother.CloneWithName("target")
 	require.NoError(t, err, "Error cloning instance")
@@ -345,17 +333,10 @@ func TestBittwister_Latency(t *testing.T) {
 
 	require.NoError(t, target.EnableBitTwister(), "Error enabling BitTwister")
 	require.NoError(t, target.Start(), "Error starting target instance")
-	require.NoError(t, target.WaitInstanceIsRunning(), "Error waiting for target instance to be running")
 
-	// Forward the port to the local machine
-	fwdBtPort, err := target.PortForwardTCP(target.BitTwister.Port())
-	require.NoError(t, err, "Error port forwarding")
-	target.BitTwister.SetPort(fwdBtPort)
-	target.BitTwister.SetNewClientByIPAddr("http://localhost")
-	t.Logf("BitTwister listening on http://localhost:%d", fwdBtPort)
+	forwardBitTwisterPort(t, target)
 
 	require.NoError(t, executor.Start(), "Error starting executor instance")
-	require.NoError(t, executor.WaitInstanceIsRunning(), "Error waiting for executor instance to be running")
 
 	// Perform the test
 
@@ -475,11 +456,12 @@ func TestBittwister_Jitter(t *testing.T) {
 	require.NoError(t, err, "Error setting image")
 
 	gopingPort := 8001
-	err = mother.SetEnvironmentVariable("SERVE_ADDR", fmt.Sprintf("0.0.0.0:%d", gopingPort))
-	require.NoError(t, err, "Error setting environment variable")
 
 	require.NoError(t, mother.AddPortTCP(gopingPort), "Error adding port")
 	require.NoError(t, mother.Commit(), "Error committing instance")
+
+	err = mother.SetEnvironmentVariable("SERVE_ADDR", fmt.Sprintf("0.0.0.0:%d", gopingPort))
+	require.NoError(t, err, "Error setting environment variable")
 
 	target, err := mother.CloneWithName("target")
 	require.NoError(t, err, "Error cloning instance")
@@ -501,17 +483,10 @@ func TestBittwister_Jitter(t *testing.T) {
 
 	require.NoError(t, target.EnableBitTwister(), "Error enabling BitTwister")
 	require.NoError(t, target.Start(), "Error starting target instance")
-	require.NoError(t, target.WaitInstanceIsRunning(), "Error waiting for target instance to be running")
 
-	// Forward the port to the local machine
-	fwdBtPort, err := target.PortForwardTCP(target.BitTwister.Port())
-	require.NoError(t, err, "Error port forwarding")
-	target.BitTwister.SetPort(fwdBtPort)
-	target.BitTwister.SetNewClientByIPAddr("http://localhost")
-	t.Logf("BitTwister listening on http://localhost:%d", fwdBtPort)
+	forwardBitTwisterPort(t, target)
 
 	require.NoError(t, executor.Start(), "Error starting executor instance")
-	require.NoError(t, executor.WaitInstanceIsRunning(), "Error waiting for executor instance to be running")
 
 	// Perform the test
 
@@ -606,4 +581,12 @@ func formatBandwidth(bandwidth float64) string {
 
 	bandwidth = math.Round(bandwidth*100) / 100
 	return fmt.Sprintf("%.2f %s", bandwidth, units[unitIndex])
+}
+
+func forwardBitTwisterPort(t *testing.T, i *knuu.Instance) {
+	fwdBtPort, err := i.PortForwardTCP(i.BitTwister.Port())
+	require.NoError(t, err, "Error port forwarding")
+	i.BitTwister.SetPort(fwdBtPort)
+	i.BitTwister.SetNewClientByIPAddr("http://localhost")
+	t.Logf("BitTwister listening on http://localhost:%d", fwdBtPort)
 }
