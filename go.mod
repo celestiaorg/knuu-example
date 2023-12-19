@@ -7,7 +7,7 @@ toolchain go1.21.1
 require (
 	github.com/celestiaorg/celestia-app v1.0.0-rc15
 	github.com/celestiaorg/celestia-node v0.11.0-rc13
-	github.com/celestiaorg/knuu v0.8.3-0.20230922171445-5302def3a1c4
+	github.com/celestiaorg/knuu v0.10.1-0.20231219115840-1f4d050f5ccb
 	github.com/cosmos/cosmos-sdk v0.46.14
 	github.com/rs/zerolog v1.29.1
 	github.com/sirupsen/logrus v1.9.3
@@ -41,7 +41,7 @@ require (
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/btcsuite/btcd/btcec/v2 v2.3.2 // indirect
-	github.com/celestiaorg/bittwister v0.0.0-20231207100307-b76451880378 // indirect
+	github.com/celestiaorg/bittwister v0.0.0-20231213180407-65cdbaf5b8c7 // indirect
 	github.com/celestiaorg/go-ds-badger4 v0.0.0-20230712104058-7ede1c814ac5 // indirect
 	github.com/celestiaorg/go-fraud v0.2.0 // indirect
 	github.com/celestiaorg/go-header v0.3.1 // indirect
