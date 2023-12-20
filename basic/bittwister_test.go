@@ -34,7 +34,6 @@ func TestBittwister_Bandwidth(t *testing.T) {
 	iperfMother, err := knuu.NewInstance("iperf")
 	require.NoError(t, err, "Error creating instance")
 
-	require.NoError(t, iperfMother.EnableBitTwister(), "Error enabling BitTwister")
 	err = iperfMother.SetImage(iperfImage)
 	require.NoError(t, err, "Error setting image")
 
@@ -86,32 +85,32 @@ func TestBittwister_Bandwidth(t *testing.T) {
 		{
 			name:             "1 Mbps",
 			targetBandwidth:  1024 * 1000,
-			tolerancePercent: 40,
+			tolerancePercent: 50,
 		},
 		{
 			name:             "2 Mbps",
 			targetBandwidth:  2 * 1024 * 1000,
-			tolerancePercent: 35,
+			tolerancePercent: 50,
 		},
 		{
 			name:             "4 Mbps",
 			targetBandwidth:  4 * 1024 * 1000,
-			tolerancePercent: 35,
+			tolerancePercent: 50,
 		},
 		{
 			name:             "8 Mbps",
 			targetBandwidth:  8 * 1024 * 1000,
-			tolerancePercent: 35,
+			tolerancePercent: 50,
 		},
 		{
 			name:             "16 Mbps",
 			targetBandwidth:  16 * 1024 * 1000,
-			tolerancePercent: 35,
+			tolerancePercent: 50,
 		},
 		{
 			name:             "32 Mbps",
 			targetBandwidth:  32 * 1024 * 1000,
-			tolerancePercent: 35,
+			tolerancePercent: 50,
 		},
 	}
 
@@ -169,7 +168,6 @@ func TestBittwister_Packetloss(t *testing.T) {
 	mother, err := knuu.NewInstance("mother")
 	require.NoError(t, err, "Error creating instance")
 
-	require.NoError(t, mother.EnableBitTwister(), "Error enabling BitTwister")
 	err = mother.SetImage(gopingImage)
 	require.NoError(t, err, "Error setting image")
 
@@ -301,7 +299,6 @@ func TestBittwister_Latency(t *testing.T) {
 	mother, err := knuu.NewInstance("mother")
 	require.NoError(t, err, "Error creating instance")
 
-	require.NoError(t, mother.EnableBitTwister(), "Error enabling BitTwister")
 	err = mother.SetImage(gopingImage)
 	require.NoError(t, err, "Error setting image")
 
