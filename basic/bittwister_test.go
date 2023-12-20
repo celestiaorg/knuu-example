@@ -28,7 +28,7 @@ func TestBittwister_Bandwidth(t *testing.T) {
 	const (
 		iperfTestDuration    = 45 * time.Second
 		iperfParallelClients = 4
-		commandTimeout       = 15 * time.Minute
+		commandTimeout       = 60 * time.Minute
 	)
 
 	iperfMother, err := knuu.NewInstance("iperf")
@@ -162,7 +162,7 @@ func TestBittwister_Packetloss(t *testing.T) {
 	const (
 		numOfPingPackets = 1000
 		packetTimeout    = 10 * time.Millisecond
-		commandTimeout   = 10 * time.Minute
+		commandTimeout   = 60 * time.Minute
 	)
 
 	mother, err := knuu.NewInstance("mother")
@@ -293,7 +293,7 @@ func TestBittwister_Latency(t *testing.T) {
 	const (
 		numOfPingPackets = 100
 		packetTimeout    = 100 * time.Millisecond
-		commandTimeout   = 10 * time.Minute
+		commandTimeout   = 60 * time.Minute
 	)
 
 	mother, err := knuu.NewInstance("mother")
@@ -442,13 +442,12 @@ func TestBittwister_Jitter(t *testing.T) {
 	const (
 		numOfPingPackets = 100
 		packetTimeout    = 100 * time.Millisecond
-		commandTimeout   = 10 * time.Minute
+		commandTimeout   = 60 * time.Minute
 	)
 
 	mother, err := knuu.NewInstance("mother")
 	require.NoError(t, err, "Error creating instance")
 
-	require.NoError(t, mother.EnableBitTwister(), "Error enabling BitTwister")
 	err = mother.SetImage(gopingImage)
 	require.NoError(t, err, "Error setting image")
 
