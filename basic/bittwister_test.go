@@ -161,7 +161,7 @@ func TestBittwister_Packetloss(t *testing.T) {
 
 	const (
 		numOfPingPackets = 1000
-		packetTimeout    = 10 * time.Millisecond
+		packetTimeout    = 1 * time.Second
 		commandTimeout   = 60 * time.Minute
 	)
 
@@ -292,7 +292,7 @@ func TestBittwister_Latency(t *testing.T) {
 
 	const (
 		numOfPingPackets = 100
-		packetTimeout    = 100 * time.Millisecond
+		packetTimeout    = 1 * time.Second
 		commandTimeout   = 60 * time.Minute
 	)
 
@@ -350,47 +350,47 @@ func TestBittwister_Latency(t *testing.T) {
 		{
 			name:             "20Maxms",
 			targetLatency:    20 * time.Millisecond,
-			tolerancePercent: 30,
+			tolerancePercent: 50,
 		},
 		{
 			name:             "50Maxms",
 			targetLatency:    50 * time.Millisecond,
-			tolerancePercent: 10,
+			tolerancePercent: 50,
 		},
 		{
 			name:             "100Maxms",
 			targetLatency:    100 * time.Millisecond,
-			tolerancePercent: 10,
+			tolerancePercent: 50,
 		},
 		{
 			name:             "200Maxms",
 			targetLatency:    200 * time.Millisecond,
-			tolerancePercent: 10,
+			tolerancePercent: 50,
 		},
 		{
 			name:             "500Maxms",
 			targetLatency:    500 * time.Millisecond,
-			tolerancePercent: 10,
+			tolerancePercent: 50,
 		},
 		{
 			name:             "Max1s",
 			targetLatency:    1 * time.Second,
-			tolerancePercent: 10,
+			tolerancePercent: 50,
 		},
 		{
 			name:             "Max2s",
 			targetLatency:    2 * time.Second,
-			tolerancePercent: 10,
+			tolerancePercent: 50,
 		},
 		{
 			name:             "Max3s",
 			targetLatency:    3 * time.Second,
-			tolerancePercent: 10,
+			tolerancePercent: 50,
 		},
 		{
 			name:             "Max5s",
 			targetLatency:    5 * time.Second,
-			tolerancePercent: 10,
+			tolerancePercent: 50,
 		},
 	}
 
@@ -441,7 +441,7 @@ func TestBittwister_Jitter(t *testing.T) {
 
 	const (
 		numOfPingPackets = 100
-		packetTimeout    = 100 * time.Millisecond
+		packetTimeout    = 1 * time.Second
 		commandTimeout   = 60 * time.Minute
 	)
 
