@@ -1,11 +1,15 @@
 package celestia_app
 
 import (
-	"github.com/celestiaorg/knuu-example/celestia_app/utils"
-	"github.com/celestiaorg/knuu/pkg/knuu"
 	"os"
+	"strings"
 	"testing"
 	"time"
+
+	"github.com/celestiaorg/knuu-example/celestia_app/utils"
+	"github.com/celestiaorg/knuu/pkg/knuu"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNetworking(t *testing.T) {
@@ -58,6 +62,7 @@ func TestNetworking(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error waiting for instance to be running: %v", err)
 	}
+
 	// TODO: replace persistentPeers by utils call
 	validatorIP, err := validator.GetIP()
 	if err != nil {
@@ -74,6 +79,7 @@ func TestNetworking(t *testing.T) {
 	}
 
 	t.Log("Starting full nodes")
+	require.NoError(t, full.EnableBitTwister(), "Error enabling BitTwister")
 	err = full.Start()
 	if err != nil {
 		t.Fatalf("Error starting instance: %v", err)
@@ -83,11 +89,27 @@ func TestNetworking(t *testing.T) {
 		t.Fatalf("Error waiting for instance to be running: %v", err)
 	}
 
+	forwardBitTwisterPort(t, full)
+
 	// Wait until validator reaches block height 1 or more
 	err = utils.WaitForHeight(executor, full, 1)
 	if err != nil {
 		t.Fatalf("Error waiting for height: %v", err)
 	}
+
+	require.NoError(t, full.SetPacketLoss(100), "Error setting packet loss")
+	height, err := utils.GetHeight(executor, full)
+	if err != nil && !strings.Contains(err.Error(), "context deadline exceeded") {
+		t.Fatalf("Error getting height: %v", err)
+	}
+	assert.EqualValues(t, 0, height, "Height should be 0")
+
+	require.NoError(t, full.SetPacketLoss(0), "Error setting packet loss")
+	height, err = utils.GetHeight(executor, full)
+	if err != nil {
+		t.Fatalf("Error getting height: %v", err)
+	}
+	assert.EqualValues(t, 1, height, "Height should be 1")
 
 	// Disable networking
 	t.Log("Disabling networking")
@@ -97,7 +119,7 @@ func TestNetworking(t *testing.T) {
 	}
 
 	// Get current block height
-	height, err := utils.GetHeight(executor, full)
+	height, err = utils.GetHeight(executor, full)
 	if err != nil {
 		t.Fatalf("Error getting height: %v", err)
 	}
