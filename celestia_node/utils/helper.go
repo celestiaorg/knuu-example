@@ -21,6 +21,6 @@ func iDFromP2PInfo(p2pInfo string) (string, error) {
 		return "", fmt.Errorf("error unmarshalling status: %w", err)
 	}
 	resultData := result["result"].(map[string]interface{})
-	id := resultData["ID"].(string)
+	id := resultData["id"].(string)
 	return id, nil
 }

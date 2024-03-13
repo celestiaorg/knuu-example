@@ -1,10 +1,11 @@
 package celestia_app
 
 import (
-	"github.com/celestiaorg/knuu-example/celestia_app/utils"
-	"github.com/celestiaorg/knuu/pkg/knuu"
 	"os"
 	"testing"
+
+	"github.com/celestiaorg/knuu-example/celestia_app/utils"
+	"github.com/celestiaorg/knuu/pkg/knuu"
 )
 
 func TestPoolSync(t *testing.T) {
@@ -69,7 +70,7 @@ func TestPoolSync(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error getting persistent peers: %v", err)
 	}
-	err = full.SetArgs("start", "--home=/root/.celestia-app", "--rpc.laddr=tcp://0.0.0.0:26657", "--p2p.persistent_peers", persistentPeers)
+	err = full.SetArgs("start", "--home=/home/celestia", "--rpc.laddr=tcp://0.0.0.0:26657", "--minimum-gas-prices=0.002utia", "--p2p.persistent_peers", persistentPeers)
 	if err != nil {
 		t.Fatalf("Error setting args: %v", err)
 	}

@@ -1,11 +1,12 @@
 package celestia_app
 
 import (
-	"github.com/celestiaorg/knuu-example/celestia_app/utils"
-	"github.com/celestiaorg/knuu/pkg/knuu"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/celestiaorg/knuu-example/celestia_app/utils"
+	"github.com/celestiaorg/knuu/pkg/knuu"
 )
 
 func TestNetworking(t *testing.T) {
@@ -68,7 +69,7 @@ func TestNetworking(t *testing.T) {
 		t.Fatalf("Error getting node id: %v", err)
 	}
 	persistentPeers := id + "@" + validatorIP + ":26656"
-	err = full.SetArgs("start", "--home=/root/.celestia-app", "--rpc.laddr=tcp://0.0.0.0:26657", "--p2p.persistent_peers", persistentPeers)
+	err = full.SetArgs("start", "--home=/home/celestia", "--rpc.laddr=tcp://0.0.0.0:26657", "--minimum-gas-prices=0.002utia", "--p2p.persistent_peers", persistentPeers)
 	if err != nil {
 		t.Fatalf("Error setting args: %v", err)
 	}

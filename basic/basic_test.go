@@ -1,10 +1,12 @@
 package basic
 
 import (
-	"github.com/celestiaorg/knuu/pkg/knuu"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/celestiaorg/knuu/pkg/knuu"
 )
 
 func TestBasic(t *testing.T) {

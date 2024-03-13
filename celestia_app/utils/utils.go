@@ -2,8 +2,9 @@ package utils
 
 import (
 	"fmt"
-	"github.com/celestiaorg/knuu/pkg/knuu"
 	"time"
+
+	"github.com/celestiaorg/knuu/pkg/knuu"
 )
 
 type JSONRPCError struct {

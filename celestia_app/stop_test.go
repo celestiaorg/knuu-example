@@ -1,11 +1,12 @@
 package celestia_app
 
 import (
-	"github.com/celestiaorg/knuu-example/celestia_app/utils"
-	"github.com/celestiaorg/knuu/pkg/knuu"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/celestiaorg/knuu-example/celestia_app/utils"
+	"github.com/celestiaorg/knuu/pkg/knuu"
 )
 
 func TestStop(t *testing.T) {
@@ -25,7 +26,7 @@ func TestStop(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error cloning instance: %v", err)
 	}
-	err = full.AddVolume("/root/.celestia-app", "1Gi")
+	err = full.AddVolumeWithOwner("/home/celestia", "1Gi", 10001)
 	if err != nil {
 		t.Fatalf("Error adding volume: %v", err)
 	}
@@ -65,7 +66,7 @@ func TestStop(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error getting persistent peers: %v", err)
 	}
-	err = full.SetArgs("start", "--home=/root/.celestia-app", "--rpc.laddr=tcp://0.0.0.0:26657", "--p2p.persistent_peers", persistentPeers)
+	err = full.SetArgs("start", "--home=/home/celestia", "--rpc.laddr=tcp://0.0.0.0:26657", "--minimum-gas-prices=0.002utia", "--p2p.persistent_peers", persistentPeers)
 	if err != nil {
 		t.Fatalf("Error setting args: %v", err)
 	}
