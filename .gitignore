@@ -1,2 +1,4 @@
 **/tmp
 **/Dockerfile_**
+.idea
+.DS_Store
