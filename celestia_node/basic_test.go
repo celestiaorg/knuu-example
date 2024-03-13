@@ -2,11 +2,12 @@ package celestia_app
 
 import (
 	"context"
+	"os"
+	"testing"
+
 	app_utils "github.com/celestiaorg/knuu-example/celestia_app/utils"
 	"github.com/celestiaorg/knuu-example/celestia_node/utils"
 	"github.com/celestiaorg/knuu/pkg/knuu"
-	"os"
-	"testing"
 )
 
 func TestBasic(t *testing.T) {

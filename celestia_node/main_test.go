@@ -2,9 +2,10 @@ package celestia_app
 
 import (
 	"fmt"
-	"github.com/celestiaorg/knuu/pkg/knuu"
 	"os"
 	"testing"
+
+	"github.com/celestiaorg/knuu/pkg/knuu"
 )
 
 func TestMain(m *testing.M) {

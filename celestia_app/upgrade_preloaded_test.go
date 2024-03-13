@@ -1,13 +1,14 @@
 package celestia_app
 
 import (
-	"github.com/celestiaorg/knuu-example/celestia_app/utils"
-	"github.com/celestiaorg/knuu/pkg/knuu"
 	"os"
 	"testing"
+
+	"github.com/celestiaorg/knuu-example/celestia_app/utils"
+	"github.com/celestiaorg/knuu/pkg/knuu"
 )
 
-var imageToUpgrade = "ghcr.io/celestiaorg/celestia-app:v0.12.2"
+var imageToUpgrade = "ghcr.io/celestiaorg/celestia-app:v1.6.0"
 
 func TestUpgradePreloaded(t *testing.T) {
 	t.Parallel()
@@ -39,7 +40,7 @@ func TestUpgradePreloaded(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error cloning instance: %v", err)
 	}
-	err = validator.AddVolume("/root/.celestia-app", "1Gi")
+	err = validator.AddVolumeWithOwner("/home/celestia/", "1Gi", 10001)
 	if err != nil {
 		t.Fatalf("Error adding volume: %v", err)
 	}

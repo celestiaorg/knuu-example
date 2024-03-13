@@ -1,10 +1,11 @@
 package celestia_app
 
 import (
-	"github.com/celestiaorg/knuu-example/celestia_app/utils"
-	"github.com/celestiaorg/knuu/pkg/knuu"
 	"os"
 	"testing"
+
+	"github.com/celestiaorg/knuu-example/celestia_app/utils"
+	"github.com/celestiaorg/knuu/pkg/knuu"
 )
 
 func TestUpgrade(t *testing.T) {
@@ -20,7 +21,7 @@ func TestUpgrade(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error cloning instance: %v", err)
 	}
-	err = validator.AddVolume("/root/.celestia-app", "1Gi")
+	err = validator.AddVolumeWithOwner("/home/celestia/", "1Gi", 10001)
 	if err != nil {
 		t.Fatalf("Error adding volume: %v", err)
 	}
@@ -60,9 +61,9 @@ func TestUpgrade(t *testing.T) {
 		t.Fatalf("Error waiting for height: %v", err)
 	}
 
-	t.Log("Updating validator to v0.12.2")
+	t.Log("Updating validator to v1.7.0")
 
-	err = validator.SetImage("ghcr.io/celestiaorg/celestia-app:v0.12.2")
+	err = validator.SetImage("ghcr.io/celestiaorg/celestia-app:v1.7.0")
 	if err != nil {
 		t.Fatalf("Error setting image: %v", err)
 	}
