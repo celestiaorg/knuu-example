@@ -31,7 +31,7 @@ func prepareInstances(m *testing.M) {
 	if err != nil {
 		logrus.Fatalf("Error creating instance '%v':", err)
 	}
-	err = validator.SetImage("ghcr.io/celestiaorg/celestia-app:v0.12.1")
+	err = validator.SetImage("ghcr.io/celestiaorg/celestia-app:v1.7.0")
 	if err != nil {
 		logrus.Fatalf("Error setting image: %v", err)
 	}
@@ -43,15 +43,15 @@ func prepareInstances(m *testing.M) {
 	if err != nil {
 		logrus.Fatalf("Error adding port: %v", err)
 	}
-	err = validator.AddFile("resources/genesis.sh", "/opt/genesis.sh", "0:0")
+	err = validator.AddFile("resources/genesis.sh", "/home/celestia/genesis.sh", "10001:10001")
 	if err != nil {
 		logrus.Fatalf("Error adding file: %v", err)
 	}
-	_, err = validator.ExecuteCommand("/bin/sh", "/opt/genesis.sh")
+	_, err = validator.ExecuteCommand("/bin/sh", "/home/celestia/genesis.sh")
 	if err != nil {
 		logrus.Fatalf("Error executing command: %v", err)
 	}
-	err = validator.SetArgs("start", "--home=/root/.celestia-app", "--rpc.laddr=tcp://0.0.0.0:26657")
+	err = validator.SetArgs("start", "--home=/home/celestia", "--rpc.laddr=tcp://0.0.0.0:26657")
 	if err != nil {
 		logrus.Fatalf("Error setting args: %v", err)
 	}
@@ -71,7 +71,7 @@ func prepareInstances(m *testing.M) {
 	if err != nil {
 		logrus.Fatalf("Error creating instance '%v':", err)
 	}
-	err = full.SetImage("ghcr.io/celestiaorg/celestia-app:v0.12.2")
+	err = full.SetImage("ghcr.io/celestiaorg/celestia-app:v1.7.0")
 	if err != nil {
 		logrus.Fatalf("Error setting image: %v", err)
 	}
@@ -83,11 +83,11 @@ func prepareInstances(m *testing.M) {
 	if err != nil {
 		logrus.Fatalf("Error adding port: %v", err)
 	}
-	genesis, err := validator.GetFileBytes("/root/.celestia-app/config/genesis.json")
+	genesis, err := validator.GetFileBytes("/home/celestia/config/genesis.json")
 	if err != nil {
 		logrus.Fatalf("Error getting genesis: %v", err)
 	}
-	err = full.AddFileBytes(genesis, "/root/.celestia-app/config/genesis.json", "0:0")
+	err = full.AddFileBytes(genesis, "/home/celestia/config/genesis.json", "10001:10001")
 	if err != nil {
 		logrus.Fatalf("Error adding file: %v", err)
 	}
