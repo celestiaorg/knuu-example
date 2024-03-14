@@ -163,10 +163,10 @@ func TestPoolSync_WithTrafficShape(t *testing.T) {
 	persistentPeers, err := utils.GetPersistentPeers(executor, []*knuu.Instance{validator})
 	require.NoError(t, err, "Error getting persistent peers")
 
-	err = full.SetArgs("start", "--home=/root/.celestia-app", "--rpc.laddr=tcp://0.0.0.0:26657", "--p2p.persistent_peers", persistentPeers)
+	err = full.SetArgs("start", "--home=/home/celestia", "--rpc.laddr=tcp://0.0.0.0:26657", "--minimum-gas-prices=0.002utia", "--p2p.persistent_peers", persistentPeers)
 	require.NoError(t, err, "Error setting args for full node")
 
-	err = fullRestricted.SetArgs("start", "--home=/root/.celestia-app", "--rpc.laddr=tcp://0.0.0.0:26657", "--p2p.persistent_peers", persistentPeers)
+	err = fullRestricted.SetArgs("start", "--home=/home/celestia", "--rpc.laddr=tcp://0.0.0.0:26657", "--minimum-gas-prices=0.002utia", "--p2p.persistent_peers", persistentPeers)
 	require.NoError(t, err, "Error setting args for restricted full node")
 
 	// Wait until validator reaches the target block height
