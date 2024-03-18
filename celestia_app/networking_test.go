@@ -89,6 +89,7 @@ func TestNetworking(t *testing.T) {
 		t.Fatalf("Error waiting for instance to be running: %v", err)
 	}
 
+	// forward the port to your local
 	forwardBitTwisterPort(t, full)
 
 	// Wait until validator reaches block height 1 or more
@@ -97,14 +98,20 @@ func TestNetworking(t *testing.T) {
 		t.Fatalf("Error waiting for height: %v", err)
 	}
 
-	require.NoError(t, full.SetPacketLoss(100), "Error setting packet loss")
+	// get the current height of the full node
 	height, err := utils.GetHeight(executor, full)
 	if err != nil && !strings.Contains(err.Error(), "context deadline exceeded") {
 		t.Fatalf("Error getting height: %v", err)
 	}
-	assert.EqualValues(t, 0, height, "Height should be 0")
 
+	// set the package loss to 100
+	require.NoError(t, full.SetPacketLoss(100), "Error setting packet loss to 100")
+	// as we set the package loss, the full node shouldn't get updated
+	assert.EqualValues(t, 1, height, "Height should be 1")
+
+	// disable the package loss
 	require.NoError(t, full.SetPacketLoss(0), "Error setting packet loss")
+	// it should continue in 1, but start getting updated
 	height, err = utils.GetHeight(executor, full)
 	if err != nil {
 		t.Fatalf("Error getting height: %v", err)
@@ -163,5 +170,4 @@ afterTimeout:
 	if err != nil {
 		t.Fatalf("Error waiting for height: %v", err)
 	}
-
 }
