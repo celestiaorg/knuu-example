@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestNetworkingDisableNetwork(t *testing.T) {
+func TestNetworking_DisableNetwork(t *testing.T) {
 	t.Parallel()
 	// Setup
 
@@ -162,7 +162,7 @@ afterTimeout:
 	}
 }
 
-func TestNetworkingSetPacketLossDynamic(t *testing.T) {
+func TestNetworking_SetPacketLossDynamic(t *testing.T) {
 	t.Parallel()
 	// Setup
 
