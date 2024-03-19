@@ -286,6 +286,7 @@ func TestBittwister_Packetloss(t *testing.T) {
 		})
 	}
 }
+
 func TestBittwister_Latency(t *testing.T) {
 	t.Parallel()
 	// Setup
