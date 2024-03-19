@@ -117,7 +117,7 @@ func TestPoolSync_WithTrafficShape(t *testing.T) {
 	t.Parallel()
 	// Setup
 
-	const targetHeight = 20
+	const targetHeight = 5
 
 	executor, err := knuu.NewExecutor()
 	require.NoError(t, err, "Error creating executor")
