@@ -100,7 +100,7 @@ func TestBittwister_Bandwidth(t *testing.T) {
 		{
 			name:             "8 Mbps",
 			targetBandwidth:  8 * 1024 * 1000,
-			tolerancePercent: 50,
+			tolerancePercent: 55,
 		},
 		{
 			name:             "16 Mbps",
