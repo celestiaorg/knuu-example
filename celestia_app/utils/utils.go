@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -23,7 +24,10 @@ func getStatus(executor *knuu.Executor, app *knuu.Instance) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("error getting node ip: %w", err)
 	}
-	status, err := executor.ExecuteCommand("wget", "-q", "-O", "-", fmt.Sprintf("%s:26657/status", nodeIP))
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+	status, err := executor.ExecuteCommandWithContext(ctx, "wget", "-q", "-O", "-", fmt.Sprintf("%s:26657/status", nodeIP))
 	if err != nil {
 		return "", fmt.Errorf("error executing command: %w", err)
 	}
@@ -56,46 +60,38 @@ func GetHeight(executor *knuu.Executor, app *knuu.Instance) (int64, error) {
 }
 
 func WaitForHeight(executor *knuu.Executor, app *knuu.Instance, height int64) error {
-	timeout := time.After(5 * time.Minute)
-	tick := time.Tick(1 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+	return WaitForHeightWithContext(ctx, executor, app, height)
+}
 
-	maxRetries := 5
+func WaitForHeightWithContext(ctx context.Context, executor *knuu.Executor, app *knuu.Instance, height int64) error {
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
 
 	for {
 		select {
-		case <-timeout:
-			return fmt.Errorf("timeout waiting for height %d", height)
-		case <-tick:
-			var blockHeight int64
-			var err error
-			for retries := 0; retries < maxRetries; retries++ {
-				status, err := getStatus(executor, app)
-				if err != nil {
-					return fmt.Errorf("error getting status: %v", err)
-				}
-				blockHeight, err = latestBlockHeightFromStatus(status)
-				if err != nil {
-					return fmt.Errorf("error getting block height: %w", err)
-				}
-				if err != nil {
-					if _, ok := err.(*JSONRPCError); !ok {
-						// If the error is not a JSONRPCError, stop and return it
-						return fmt.Errorf("error getting block height: %w", err)
-					}
-					// If the error is a JSONRPCError, sleep and then retry
-					if retries < maxRetries-1 {
-						time.Sleep(1 * time.Second)
-					}
-				} else {
-					// If no error, break the retry loop
-					break
-				}
+		case <-ctx.Done():
+			if ctx.Err() != nil {
+				return fmt.Errorf("operation canceled: %v", ctx.Err())
 			}
+			return nil
+		case <-ticker.C:
+			status, err := getStatus(executor, app)
 			if err != nil {
+				return fmt.Errorf("error getting status: %v", err)
+			}
+
+			blockHeight, err := latestBlockHeightFromStatus(status)
+			if err != nil {
+				if _, ok := err.(*JSONRPCError); ok {
+					// Retry if it's a temporary API error
+					continue
+				}
 				return fmt.Errorf("error getting block height: %w", err)
 			}
+
 			if blockHeight >= height {
-				// Reached block height `height`
 				return nil
 			}
 		}

@@ -2,11 +2,12 @@ package basic
 
 import (
 	"fmt"
-	"github.com/celestiaorg/knuu/pkg/knuu"
-	"github.com/sirupsen/logrus"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/celestiaorg/knuu/pkg/knuu"
+	"github.com/sirupsen/logrus"
 )
 
 func TestMain(m *testing.M) {

@@ -19,23 +19,32 @@ You can find the relevant documentation in the `pkg/knuu` package at: https://pk
 ## Run
 
 ```shell
-go test -v ./...
+make test-all
 ```
 
 Or run only the basic examples:
 
 ```shell
-go test -v ./basic
+make test-basic
+```
+
+Or run BitTwister tests:
+
+```sh
+make test-bittwister-packetloss
+make test-bittwister-bandwidth
+make test-bittwister-latency
+make test-bittwister-jitter
 ```
 
 Or the celestia-app examples:
 
 ```shell
-go test -v ./celestia_app
+make test-celestia-app
 ```
 
 Or the celestia-node examples:
 
 ```shell
-go test -v ./celestia_node
+make test-celestia-node
 ```

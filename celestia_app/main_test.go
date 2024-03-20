@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/celestiaorg/knuu/pkg/knuu"
-
 	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMain(m *testing.M) {
@@ -102,4 +102,12 @@ func prepareInstances(m *testing.M) {
 	}
 
 	Instances["full"] = full
+}
+
+func forwardBitTwisterPort(t *testing.T, i *knuu.Instance) {
+	fwdBtPort, err := i.PortForwardTCP(i.BitTwister.Port())
+	require.NoError(t, err, "Error port forwarding")
+	i.BitTwister.SetPort(fwdBtPort)
+	i.BitTwister.SetNewClientByIPAddr("http://localhost")
+	t.Logf("BitTwister listening on http://localhost:%d", fwdBtPort)
 }
