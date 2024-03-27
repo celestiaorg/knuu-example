@@ -7,7 +7,7 @@ toolchain go1.22.1
 require (
 	github.com/celestiaorg/celestia-app v1.7.0
 	github.com/celestiaorg/celestia-node v0.13.1
-	github.com/celestiaorg/knuu v0.12.0-rc.0
+	github.com/celestiaorg/knuu v0.12.0
 	github.com/cosmos/cosmos-sdk v0.46.16
 	github.com/rs/zerolog v1.31.0
 	github.com/sirupsen/logrus v1.9.3
