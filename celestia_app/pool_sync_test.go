@@ -201,7 +201,7 @@ func TestPoolSync_WithTrafficShape(t *testing.T) {
 		startTime := time.Now().UnixNano()
 
 		// Set bandwidth limit for Restricted full node and then sync it with the validator
-		err = fullRestricted.SetBandwidthLimit(10 * 1000) // 10kbps
+		err = fullRestricted.SetBandwidthLimit(10 * 100) // 1kbps
 		require.NoError(t, err, "Error setting bandwidth limit for fullRestricted")
 
 		ctx, cancel := context.WithTimeout(context.Background(), 20*time.Minute)
