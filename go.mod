@@ -7,7 +7,7 @@ toolchain go1.22.1
 require (
 	github.com/celestiaorg/celestia-app v1.7.0
 	github.com/celestiaorg/celestia-node v0.13.1
-	github.com/celestiaorg/knuu v0.12.0
+	github.com/celestiaorg/knuu v0.13.0
 	github.com/cosmos/cosmos-sdk v0.46.16
 	github.com/rs/zerolog v1.31.0
 	github.com/sirupsen/logrus v1.9.3
@@ -27,9 +27,12 @@ require (
 	github.com/ethereum/c-kzg-4844 v0.4.0 // indirect
 	github.com/ipfs/go-ds-badger4 v0.1.5 // indirect
 	github.com/matttproud/golang_protobuf_extensions/v2 v2.0.0 // indirect
+	github.com/minio/md5-simd v1.1.2 // indirect
+	github.com/minio/minio-go/v7 v7.0.69 // indirect
 	github.com/mmcloughlin/addchain v0.4.0 // indirect
 	github.com/moby/docker-image-spec v1.3.1 // indirect
 	github.com/rollkit/go-da v0.4.0 // indirect
+	github.com/rs/xid v1.5.0 // indirect
 	github.com/supranational/blst v0.3.11 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.46.1 // indirect
 	go.uber.org/mock v0.4.0 // indirect
