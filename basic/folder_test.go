@@ -1,10 +1,12 @@
 package basic
 
 import (
-	"github.com/celestiaorg/knuu/pkg/knuu"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/celestiaorg/knuu/pkg/knuu"
 )
 
 func TestFolder(t *testing.T) {
@@ -29,13 +31,13 @@ func TestFolder(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error executing command '%v':", err)
 	}
-	err = web.AddFolder("resources/html", "/usr/share/nginx/html", "0:0")
-	if err != nil {
-		t.Fatalf("Error adding file '%v':", err)
-	}
 	err = web.Commit()
 	if err != nil {
 		t.Fatalf("Error committing instance: %v", err)
+	}
+	err = web.AddFolder("resources/html", "/usr/share/nginx/html", "0:0")
+	if err != nil {
+		t.Fatalf("Error adding file '%v':", err)
 	}
 
 	t.Cleanup(func() {

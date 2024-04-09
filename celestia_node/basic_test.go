@@ -5,9 +5,10 @@ import (
 	"os"
 	"testing"
 
+	"github.com/celestiaorg/knuu/pkg/knuu"
+
 	app_utils "github.com/celestiaorg/knuu-example/celestia_app/utils"
 	"github.com/celestiaorg/knuu-example/celestia_node/utils"
-	"github.com/celestiaorg/knuu/pkg/knuu"
 )
 
 func TestBasic(t *testing.T) {
