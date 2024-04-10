@@ -9,7 +9,7 @@ require (
 	github.com/celestiaorg/celestia-node v0.13.1
 	github.com/celestiaorg/knuu v0.13.1-rc.0
 	github.com/cosmos/cosmos-sdk v0.46.16
-	github.com/rs/zerolog v1.31.0
+	github.com/rs/zerolog v1.32.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.9.0
 	github.com/tendermint/tendermint v0.35.4
