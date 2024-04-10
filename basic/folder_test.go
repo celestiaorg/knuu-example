@@ -1,10 +1,11 @@
 package basic
 
 import (
-	"github.com/celestiaorg/knuu/pkg/knuu"
-	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
+
+	"github.com/celestiaorg/knuu/pkg/knuu"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFolder(t *testing.T) {
