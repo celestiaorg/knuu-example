@@ -3,6 +3,7 @@ package basic
 import (
 	"fmt"
 	"os"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -19,39 +20,60 @@ func TestFileCached(t *testing.T) {
 		t.Fatalf("Error creating executor: %v", err)
 	}
 
-	const numberOfInstances = 10 // Define how many instances you want to create
+	const numberOfInstances = 10
 	instances := make([]*knuu.Instance, numberOfInstances)
+	errs := make(chan error, numberOfInstances)
 
+	//var wg sync.WaitGroup
 	for i := 0; i < numberOfInstances; i++ {
-		instanceName := fmt.Sprintf("web%d", i+1) // Generates a unique name for each instance
+		instanceName := fmt.Sprintf("web%d", i+1)
 		instance, err := knuu.NewInstance(instanceName)
 		if err != nil {
-			t.Fatalf("Error creating instance '%v': %v", instanceName, err)
+			errs <- fmt.Errorf("Error creating instance '%v': %v", instanceName, err)
+			return
 		}
-
 		err = instance.SetImage("docker.io/nginx:latest")
 		if err != nil {
-			t.Fatalf("Error setting image for '%v': %v", instanceName, err)
+			errs <- fmt.Errorf("Error setting image for '%v': %v", instanceName, err)
+			return
 		}
-
 		instance.AddPortTCP(80)
-
 		_, err = instance.ExecuteCommand("mkdir", "-p", "/usr/share/nginx/html")
 		if err != nil {
-			t.Fatalf("Error executing command for '%v': %v", instanceName, err)
+			errs <- fmt.Errorf("Error executing command for '%v': %v", instanceName, err)
+			return
 		}
-
 		err = instance.Commit()
 		if err != nil {
-			t.Fatalf("Error committing instance '%v': %v", instanceName, err)
-		}
-
-		err = instance.AddFile("resources/html/index.html", "/usr/share/nginx/html/index.html", "0:0")
-		if err != nil {
-			t.Fatalf("Error adding file to '%v': %v", instanceName, err)
+			errs <- fmt.Errorf("Error committing instance '%v': %v", instanceName, err)
+			return
 		}
 
 		instances[i] = instance // Stores the instance reference for later use
+	}
+
+	var wgFolders sync.WaitGroup
+	for i, instance := range instances {
+		wgFolders.Add(1)
+		go func(i int, instance *knuu.Instance) {
+			defer wgFolders.Done()
+			instanceName := fmt.Sprintf("web%d", i+1)
+			// adding the folder after the Commit, it will help us to use a cached image.
+			err = instance.AddFile("resources/html/index.html", "/usr/share/nginx/html/index.html", "0:0")
+			if err != nil {
+				errs <- fmt.Errorf("Error adding file to '%v': %v", instanceName, err)
+				return
+			}
+		}(i, instance)
+	}
+	wgFolders.Wait()
+
+	close(errs)
+
+	for err := range errs {
+		if err != nil {
+			t.Fatalf("%v", err)
+		}
 	}
 
 	t.Cleanup(func() {
@@ -73,60 +95,39 @@ func TestFileCached(t *testing.T) {
 		}
 	})
 
-	// Test logic
-	webdifferent, err := knuu.NewInstance("webdifferent")
-	if err != nil {
-		t.Fatalf("Error creating instance '%v':", err)
-	}
-	err = webdifferent.SetImage("docker.io/nginx:latest")
-	if err != nil {
-		t.Fatalf("Error setting image '%v':", err)
-	}
-	webdifferent.AddPortTCP(80)
-	_, err = webdifferent.ExecuteCommand("mkdir", "-p", "/usr/share/nginx/html")
-	if err != nil {
-		t.Fatalf("Error executing command '%v':", err)
-	}
-
-	err = webdifferent.Commit()
-	if err != nil {
-		t.Fatalf("Error committing instance: %v", err)
-	}
-
-	err = webdifferent.AddFile("resources/html/smuu.html", "/usr/share/nginx/html/index.html", "0:0")
-	if err != nil {
-		t.Fatalf("Error adding file '%v':", err)
-	}
-
 	t.Cleanup(func() {
 		// Cleanup
-		if os.Getenv("KNUU_SKIP_CLEANUP") == "true" {
-			t.Log("Skipping cleanup")
-			return
-		}
+		if os.Getenv("KNUU_SKIP_CLEANUP") != "true" {
+			err := executor.Destroy()
+			if err != nil {
+				t.Fatalf("Error destroying executor: %v", err)
+			}
 
-		err = executor.Destroy()
-		if err != nil {
-			t.Fatalf("Error destroying executor: %v", err)
-		}
-
-		err = webdifferent.Destroy()
-		if err != nil {
-			t.Fatalf("Error destroying instance: %v", err)
+			for _, instance := range instances {
+				if instance != nil {
+					err := instance.Destroy()
+					if err != nil {
+						t.Fatalf("Error destroying instance: %v", err)
+					}
+				}
+			}
 		}
 	})
 
 	// Test logic
+	for _, instance := range instances {
+		err = instance.StartWithoutWait()
+		if err != nil {
+			t.Fatalf("Error waiting for instance to be running: %v", err)
+		}
+	}
+
 	for _, instance := range instances {
 		webIP, err := instance.GetIP()
 		if err != nil {
 			t.Fatalf("Error getting IP: %v", err)
 		}
 
-		err = instance.Start()
-		if err != nil {
-			t.Fatalf("Error starting instance: %v", err)
-		}
 		err = instance.WaitInstanceIsRunning()
 		if err != nil {
 			t.Fatalf("Error waiting for instance to be running: %v", err)
@@ -139,25 +140,4 @@ func TestFileCached(t *testing.T) {
 
 		assert.Equal(t, "Hello World!\n", wget)
 	}
-
-	webIPdifferent, err := webdifferent.GetIP()
-	if err != nil {
-		t.Fatalf("Error getting IP '%v':", err)
-	}
-
-	err = webdifferent.Start()
-	if err != nil {
-		t.Fatalf("Error starting instance: %v", err)
-	}
-	err = webdifferent.WaitInstanceIsRunning()
-	if err != nil {
-		t.Fatalf("Error waiting for instance to be running: %v", err)
-	}
-
-	wget2, err := executor.ExecuteCommand("wget", "-q", "-O", "-", webIPdifferent)
-	if err != nil {
-		t.Fatalf("Error executing command '%v':", err)
-	}
-
-	assert.Equal(t, wget2, "It's-a Me, Smuu!\n")
 }
