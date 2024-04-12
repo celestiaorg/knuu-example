@@ -25,7 +25,6 @@ func TestFolderCached(t *testing.T) {
 	instances := make([]*knuu.Instance, numberOfInstances)
 	errs := make(chan error, numberOfInstances)
 
-	//var wg sync.WaitGroup
 	for i := 0; i < numberOfInstances; i++ {
 		instanceName := fmt.Sprintf("web%d", i+1)
 		instance, err := knuu.NewInstance(instanceName)
@@ -50,7 +49,7 @@ func TestFolderCached(t *testing.T) {
 			return
 		}
 
-		instances[i] = instance // Stores the instance reference for later use
+		instances[i] = instance
 	}
 
 	var wgFolders sync.WaitGroup
