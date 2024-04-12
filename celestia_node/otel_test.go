@@ -45,7 +45,7 @@ func TestOtel(t *testing.T) {
 	if err := bridge.SetOtelEndpoint(4318); err != nil {
 		t.Fatalf("Error setting otel endpoint: %v", err)
 	}
-	if err := bridge.SetPrometheusEndpoint(8890, fmt.Sprintf("knuu-%s", knuu.Identifier()), "1m"); err != nil {
+	if err := bridge.SetPrometheusEndpoint(8890, fmt.Sprintf("knuu-%s", knuu.Scope()), "1m"); err != nil {
 		t.Fatalf("Error setting prometheus endpoint: %v", err)
 	}
 	if err := bridge.SetJaegerEndpoint(14250, 6831, 14268); err != nil {
@@ -66,7 +66,7 @@ func TestOtel(t *testing.T) {
 	if err := full.SetOtelEndpoint(4318); err != nil {
 		t.Fatalf("Error setting otel endpoint: %v", err)
 	}
-	if err := full.SetPrometheusEndpoint(8890, knuu.Identifier(), "10s"); err != nil {
+	if err := full.SetPrometheusEndpoint(8890, knuu.Scope(), "10s"); err != nil {
 		t.Fatalf("Error setting prometheus endpoint: %v", err)
 	}
 	if err := full.SetJaegerEndpoint(14250, 6831, 14268); err != nil {
@@ -87,7 +87,7 @@ func TestOtel(t *testing.T) {
 	if err := light.SetOtelEndpoint(4318); err != nil {
 		t.Fatalf("Error setting otel endpoint: %v", err)
 	}
-	if err := light.SetPrometheusEndpoint(8890, knuu.Identifier(), "10s"); err != nil {
+	if err := light.SetPrometheusEndpoint(8890, knuu.Scope(), "10s"); err != nil {
 		t.Fatalf("Error setting prometheus endpoint: %v", err)
 	}
 	if err := light.SetJaegerEndpoint(14250, 6831, 14268); err != nil {
