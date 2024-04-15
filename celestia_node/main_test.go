@@ -1,18 +1,19 @@
 package celestia_app
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
 	"github.com/celestiaorg/knuu/pkg/knuu"
+	"github.com/sirupsen/logrus"
 )
 
 func TestMain(m *testing.M) {
 	err := knuu.Initialize()
 	if err != nil {
-		fmt.Errorf("error initializing knuu: %v", err)
+		logrus.Fatalf("error initializing knuu: %v", err)
 	}
+	logrus.Infof("Scope: %s", knuu.Scope())
 	exitVal := m.Run()
 	os.Exit(exitVal)
 }
