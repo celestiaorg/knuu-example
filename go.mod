@@ -370,4 +370,3 @@ replace (
 	github.com/tendermint/tendermint => github.com/celestiaorg/celestia-core v1.35.0-tm-v0.34.29
 )
 
-replace github.com/celestiaorg/knuu => /home/samuel/git/celestiaorg/knuu/branches/smuu/introduce-scope
