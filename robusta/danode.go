@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/rs/zerolog/log"
 	"strings"
+
+	"github.com/rs/zerolog/log"
 
 	"github.com/celestiaorg/knuu/pkg/knuu"
 )
@@ -117,7 +118,7 @@ func NewDaNode(
 		if err := instance.SetOtelEndpoint(4318); err != nil {
 			return nil, err
 		}
-		if err := instance.SetPrometheusEndpoint(8890, fmt.Sprintf("knuu-%s", knuu.Identifier()), "1m"); err != nil {
+		if err := instance.SetPrometheusEndpoint(8890, fmt.Sprintf("knuu-%s", knuu.Scope()), "1m"); err != nil {
 			return nil, err
 		}
 		if err := instance.SetJaegerEndpoint(14250, 6831, 14268); err != nil {
