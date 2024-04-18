@@ -3,6 +3,7 @@ package basic
 import (
 	"fmt"
 	"os"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,18 +13,19 @@ import (
 
 func TestFolderCached(t *testing.T) {
 	t.Parallel()
-	// Setup
 
+	// Setup
 	executor, err := knuu.NewExecutor()
 	if err != nil {
 		t.Fatalf("Error creating executor: %v", err)
 	}
 
-	const numberOfInstances = 10 // Define how many instances you want to create
+	// Test logic
+	const numberOfInstances = 10
 	instances := make([]*knuu.Instance, numberOfInstances)
 
 	for i := 0; i < numberOfInstances; i++ {
-		instanceName := fmt.Sprintf("web%d", i+1) // Generates a unique name for each instance
+		instanceName := fmt.Sprintf("web%d", i+1)
 		instance, err := knuu.NewInstance(instanceName)
 		if err != nil {
 			t.Fatalf("Error creating instance '%v': %v", instanceName, err)
@@ -41,14 +43,24 @@ func TestFolderCached(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Error committing instance '%v': %v", instanceName, err)
 		}
-		// adding the folder after the Commit, it will help us to use a cached image.
-		err = instance.AddFolder("resources/html", "/usr/share/nginx/html", "0:0")
-		if err != nil {
-			t.Fatalf("Error adding file to '%v': %v", instanceName, err)
-		}
 
-		instances[i] = instance // Stores the instance reference for later use
+		instances[i] = instance
 	}
+
+	var wgFolders sync.WaitGroup
+	for i, instance := range instances {
+		wgFolders.Add(1)
+		go func(i int, instance *knuu.Instance) {
+			defer wgFolders.Done()
+			instanceName := fmt.Sprintf("web%d", i+1)
+			// adding the folder after the Commit, it will help us to use a cached image.
+			err := instance.AddFolder("resources/html", "/usr/share/nginx/html", "0:0")
+			if err != nil {
+				t.Fatalf("Error adding file to '%v': %v", instanceName, err)
+			}
+		}(i, instance)
+	}
+	wgFolders.Wait()
 
 	t.Cleanup(func() {
 		// Cleanup
@@ -71,15 +83,18 @@ func TestFolderCached(t *testing.T) {
 
 	// Test logic
 	for _, instance := range instances {
+		err = instance.StartWithoutWait()
+		if err != nil {
+			t.Fatalf("Error waiting for instance to be running: %v", err)
+		}
+	}
+
+	for _, instance := range instances {
 		webIP, err := instance.GetIP()
 		if err != nil {
 			t.Fatalf("Error getting IP: %v", err)
 		}
 
-		err = instance.Start()
-		if err != nil {
-			t.Fatalf("Error starting instance: %v", err)
-		}
 		err = instance.WaitInstanceIsRunning()
 		if err != nil {
 			t.Fatalf("Error waiting for instance to be running: %v", err)
