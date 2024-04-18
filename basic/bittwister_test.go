@@ -29,7 +29,10 @@ func TestBittwister_Bandwidth(t *testing.T) {
 		iperfTestDuration    = 45 * time.Second
 		iperfParallelClients = 4
 		commandTimeout       = 60 * time.Minute
+		knuuTimeout          = 3 * time.Hour
 	)
+
+	require.NoError(t, os.Setenv("KNUU_TIMEOUT", knuuTimeout.String()), "Error setting knuu timeout")
 
 	iperfMother, err := knuu.NewInstance("iperf")
 	require.NoError(t, err, "Error creating instance")
@@ -68,6 +71,10 @@ func TestBittwister_Bandwidth(t *testing.T) {
 	require.NoError(t, iperfServer.Start(), "Error starting iperf-server instance")
 
 	forwardBitTwisterPort(t, iperfServer)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	require.NoError(t, iperfServer.BitTwister.WaitForStart(ctx), "Error waiting for BitTwister to start")
 
 	require.NoError(t, iperfClient.Start(), "Error starting iperf-client instance")
 
@@ -163,7 +170,10 @@ func TestBittwister_Packetloss(t *testing.T) {
 		numOfPingPackets = 1000
 		packetTimeout    = 1 * time.Second
 		commandTimeout   = 60 * time.Minute
+		knuuTimeout      = 3 * time.Hour
 	)
+
+	require.NoError(t, os.Setenv("KNUU_TIMEOUT", knuuTimeout.String()), "Error setting knuu timeout")
 
 	mother, err := knuu.NewInstance("mother")
 	require.NoError(t, err, "Error creating instance")
@@ -202,6 +212,10 @@ func TestBittwister_Packetloss(t *testing.T) {
 
 	forwardBitTwisterPort(t, target)
 
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	require.NoError(t, target.BitTwister.WaitForStart(ctx), "Error waiting for BitTwister to start")
+
 	require.NoError(t, executor.Start(), "Error starting executor instance")
 
 	// Perform the test
@@ -210,11 +224,12 @@ func TestBittwister_Packetloss(t *testing.T) {
 		name                 string
 		targetPacketlossRate int32
 		tolerancePercent     int
-	}{{
-		name:                 "10%",
-		targetPacketlossRate: 10,
-		tolerancePercent:     50,
-	},
+	}{
+		{
+			name:                 "10%",
+			targetPacketlossRate: 10,
+			tolerancePercent:     50,
+		},
 		{
 			name:                 "20%",
 			targetPacketlossRate: 20,
@@ -275,7 +290,7 @@ func TestBittwister_Packetloss(t *testing.T) {
 			gotPacketloss, err := strconv.ParseFloat(output, 64)
 			require.NoError(t, err, "Error parsing output")
 
-			deviationPercent := math.Abs(gotPacketloss-float64(tc.targetPacketlossRate)) / float64(tc.targetPacketlossRate) * 100
+			deviationPercent := math.Abs(gotPacketloss - float64(tc.targetPacketlossRate))
 			assert.LessOrEqual(t, deviationPercent, float64(tc.tolerancePercent), "Deviation is too high")
 
 			t.Logf("Packetloss expected: %v%% \tgot: %.2f%% \tdeviation: %.2f%% \ttolerance: %v%%",
@@ -295,7 +310,10 @@ func TestBittwister_Latency(t *testing.T) {
 		numOfPingPackets = 100
 		packetTimeout    = 1 * time.Second
 		commandTimeout   = 60 * time.Minute
+		knuuTimeout      = 3 * time.Hour
 	)
+
+	require.NoError(t, os.Setenv("KNUU_TIMEOUT", knuuTimeout.String()), "Error setting knuu timeout")
 
 	mother, err := knuu.NewInstance("mother")
 	require.NoError(t, err, "Error creating instance")
@@ -333,6 +351,10 @@ func TestBittwister_Latency(t *testing.T) {
 	require.NoError(t, target.Start(), "Error starting target instance")
 
 	forwardBitTwisterPort(t, target)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	require.NoError(t, target.BitTwister.WaitForStart(ctx), "Error waiting for BitTwister to start")
 
 	require.NoError(t, executor.Start(), "Error starting executor instance")
 
@@ -444,7 +466,10 @@ func TestBittwister_Jitter(t *testing.T) {
 		numOfPingPackets = 100
 		packetTimeout    = 1 * time.Second
 		commandTimeout   = 60 * time.Minute
+		knuuTimeout      = 3 * time.Hour
 	)
+
+	require.NoError(t, os.Setenv("KNUU_TIMEOUT", knuuTimeout.String()), "Error setting knuu timeout")
 
 	mother, err := knuu.NewInstance("mother")
 	require.NoError(t, err, "Error creating instance")
@@ -482,6 +507,10 @@ func TestBittwister_Jitter(t *testing.T) {
 	require.NoError(t, target.Start(), "Error starting target instance")
 
 	forwardBitTwisterPort(t, target)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	require.NoError(t, target.BitTwister.WaitForStart(ctx), "Error waiting for BitTwister to start")
 
 	require.NoError(t, executor.Start(), "Error starting executor instance")
 
