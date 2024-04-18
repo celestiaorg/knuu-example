@@ -22,30 +22,25 @@ func TestFileCached(t *testing.T) {
 
 	const numberOfInstances = 10
 	instances := make([]*knuu.Instance, numberOfInstances)
-	errs := make(chan error, numberOfInstances)
 
 	for i := 0; i < numberOfInstances; i++ {
 		instanceName := fmt.Sprintf("web%d", i+1)
 		instance, err := knuu.NewInstance(instanceName)
 		if err != nil {
-			errs <- fmt.Errorf("Error creating instance '%v': %v", instanceName, err)
-			return
+			t.Fatalf("Error creating instance '%v': %v", instanceName, err)
 		}
 		err = instance.SetImage("docker.io/nginx:latest")
 		if err != nil {
-			errs <- fmt.Errorf("Error setting image for '%v': %v", instanceName, err)
-			return
+			t.Fatalf("Error setting image for '%v': %v", instanceName, err)
 		}
 		instance.AddPortTCP(80)
 		_, err = instance.ExecuteCommand("mkdir", "-p", "/usr/share/nginx/html")
 		if err != nil {
-			errs <- fmt.Errorf("Error executing command for '%v': %v", instanceName, err)
-			return
+			t.Fatalf("Error executing command for '%v': %v", instanceName, err)
 		}
 		err = instance.Commit()
 		if err != nil {
-			errs <- fmt.Errorf("Error committing instance '%v': %v", instanceName, err)
-			return
+			t.Fatalf("Error committing instance '%v': %v", instanceName, err)
 		}
 
 		instances[i] = instance
@@ -60,20 +55,11 @@ func TestFileCached(t *testing.T) {
 			// adding the folder after the Commit, it will help us to use a cached image.
 			err = instance.AddFile("resources/html/index.html", "/usr/share/nginx/html/index.html", "0:0")
 			if err != nil {
-				errs <- fmt.Errorf("Error adding file to '%v': %v", instanceName, err)
-				return
+				t.Fatalf("Error adding file to '%v': %v", instanceName, err)
 			}
 		}(i, instance)
 	}
 	wgFolders.Wait()
-
-	close(errs)
-
-	for err := range errs {
-		if err != nil {
-			t.Fatalf("%v", err)
-		}
-	}
 
 	t.Cleanup(func() {
 		// Cleanup
