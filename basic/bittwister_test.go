@@ -288,7 +288,7 @@ func TestBittwister_Packetloss(t *testing.T) {
 			t.Logf("Test took %d seconds", int64(elapsed.Seconds()))
 
 			gotPacketloss, err := strconv.ParseFloat(output, 64)
-			require.NoError(t, err, "Error parsing output")
+			require.NoError(t, err, fmt.Sprintf("Error parsing output: `%s`", output))
 
 			deviationPercent := math.Abs(gotPacketloss - float64(tc.targetPacketlossRate))
 			assert.LessOrEqual(t, deviationPercent, float64(tc.tolerancePercent), "Deviation is too high")
