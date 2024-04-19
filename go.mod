@@ -7,7 +7,7 @@ toolchain go1.22.1
 require (
 	github.com/celestiaorg/celestia-app v1.7.0
 	github.com/celestiaorg/celestia-node v0.13.1
-	github.com/celestiaorg/knuu v0.13.1-rc.3
+	github.com/celestiaorg/knuu v0.13.2
 	github.com/cosmos/cosmos-sdk v0.46.16
 	github.com/rs/zerolog v1.32.0
 	github.com/sirupsen/logrus v1.9.3
@@ -369,4 +369,3 @@ replace (
 	//github.com/tendermint/tendermint => github.com/celestiaorg/celestia-core v1.26.2-tm-v0.34.28
 	github.com/tendermint/tendermint => github.com/celestiaorg/celestia-core v1.35.0-tm-v0.34.29
 )
-
