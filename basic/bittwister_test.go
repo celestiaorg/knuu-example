@@ -29,10 +29,7 @@ func TestBittwister_Bandwidth(t *testing.T) {
 		iperfTestDuration    = 45 * time.Second
 		iperfParallelClients = 4
 		commandTimeout       = 60 * time.Minute
-		knuuTimeout          = 3 * time.Hour
 	)
-
-	require.NoError(t, os.Setenv("KNUU_TIMEOUT", knuuTimeout.String()), "Error setting knuu timeout")
 
 	iperfMother, err := knuu.NewInstance("iperf")
 	require.NoError(t, err, "Error creating instance")
@@ -170,10 +167,7 @@ func TestBittwister_Packetloss(t *testing.T) {
 		numOfPingPackets = 1000
 		packetTimeout    = 1 * time.Second
 		commandTimeout   = 60 * time.Minute
-		knuuTimeout      = 3 * time.Hour
 	)
-
-	require.NoError(t, os.Setenv("KNUU_TIMEOUT", knuuTimeout.String()), "Error setting knuu timeout")
 
 	mother, err := knuu.NewInstance("mother")
 	require.NoError(t, err, "Error creating instance")
@@ -219,6 +213,10 @@ func TestBittwister_Packetloss(t *testing.T) {
 	require.NoError(t, executor.Start(), "Error starting executor instance")
 
 	// Perform the test
+
+	fmt.Print("Sleeping for 50 minutes to allow the BitTwister to stabilize...")
+	time.Sleep(50 * time.Minute)
+	fmt.Println("Done waiting.")
 
 	tt := []struct {
 		name                 string
@@ -310,10 +308,7 @@ func TestBittwister_Latency(t *testing.T) {
 		numOfPingPackets = 100
 		packetTimeout    = 1 * time.Second
 		commandTimeout   = 60 * time.Minute
-		knuuTimeout      = 3 * time.Hour
 	)
-
-	require.NoError(t, os.Setenv("KNUU_TIMEOUT", knuuTimeout.String()), "Error setting knuu timeout")
 
 	mother, err := knuu.NewInstance("mother")
 	require.NoError(t, err, "Error creating instance")
@@ -466,10 +461,7 @@ func TestBittwister_Jitter(t *testing.T) {
 		numOfPingPackets = 100
 		packetTimeout    = 1 * time.Second
 		commandTimeout   = 60 * time.Minute
-		knuuTimeout      = 3 * time.Hour
 	)
-
-	require.NoError(t, os.Setenv("KNUU_TIMEOUT", knuuTimeout.String()), "Error setting knuu timeout")
 
 	mother, err := knuu.NewInstance("mother")
 	require.NoError(t, err, "Error creating instance")
