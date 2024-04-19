@@ -213,11 +213,6 @@ func TestBittwister_Packetloss(t *testing.T) {
 	require.NoError(t, executor.Start(), "Error starting executor instance")
 
 	// Perform the test
-
-	fmt.Print("Sleeping for 50 minutes to allow the BitTwister to stabilize...")
-	time.Sleep(50 * time.Minute)
-	fmt.Println("Done waiting.")
-
 	tt := []struct {
 		name                 string
 		targetPacketlossRate int32
