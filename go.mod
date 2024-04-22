@@ -5,7 +5,7 @@ go 1.22.0
 toolchain go1.22.1
 
 require (
-	github.com/celestiaorg/celestia-app v1.7.0
+	github.com/celestiaorg/celestia-app v1.8.0
 	github.com/celestiaorg/celestia-node v0.13.1
 	github.com/celestiaorg/knuu v0.13.3-rc.0.0.20240422105431-6e28cd7af139
 	github.com/cosmos/cosmos-sdk v0.46.16
