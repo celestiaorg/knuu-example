@@ -101,7 +101,7 @@ func TestFileCached(t *testing.T) {
 
 	// Test logic
 	for _, instance := range instances {
-		err = instance.StartWithoutWait()
+		err = instance.StartAsync()
 		if err != nil {
 			t.Fatalf("Error waiting for instance to be running: %v", err)
 		}
