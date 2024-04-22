@@ -69,6 +69,10 @@ func TestBittwister_Bandwidth(t *testing.T) {
 
 	forwardBitTwisterPort(t, iperfServer)
 
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	require.NoError(t, iperfServer.BitTwister.WaitForStart(ctx), "Error waiting for BitTwister to start")
+
 	require.NoError(t, iperfClient.Start(), "Error starting iperf-client instance")
 
 	// Perform the test
@@ -202,19 +206,23 @@ func TestBittwister_Packetloss(t *testing.T) {
 
 	forwardBitTwisterPort(t, target)
 
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	require.NoError(t, target.BitTwister.WaitForStart(ctx), "Error waiting for BitTwister to start")
+
 	require.NoError(t, executor.Start(), "Error starting executor instance")
 
 	// Perform the test
-
 	tt := []struct {
 		name                 string
 		targetPacketlossRate int32
 		tolerancePercent     int
-	}{{
-		name:                 "10%",
-		targetPacketlossRate: 10,
-		tolerancePercent:     50,
-	},
+	}{
+		{
+			name:                 "10%",
+			targetPacketlossRate: 10,
+			tolerancePercent:     50,
+		},
 		{
 			name:                 "20%",
 			targetPacketlossRate: 20,
@@ -273,9 +281,9 @@ func TestBittwister_Packetloss(t *testing.T) {
 			t.Logf("Test took %d seconds", int64(elapsed.Seconds()))
 
 			gotPacketloss, err := strconv.ParseFloat(output, 64)
-			require.NoError(t, err, "Error parsing output")
+			require.NoError(t, err, fmt.Sprintf("Error parsing output: `%s`", output))
 
-			deviationPercent := math.Abs(gotPacketloss-float64(tc.targetPacketlossRate)) / float64(tc.targetPacketlossRate) * 100
+			deviationPercent := math.Abs(gotPacketloss - float64(tc.targetPacketlossRate))
 			assert.LessOrEqual(t, deviationPercent, float64(tc.tolerancePercent), "Deviation is too high")
 
 			t.Logf("Packetloss expected: %v%% \tgot: %.2f%% \tdeviation: %.2f%% \ttolerance: %v%%",
@@ -333,6 +341,10 @@ func TestBittwister_Latency(t *testing.T) {
 	require.NoError(t, target.Start(), "Error starting target instance")
 
 	forwardBitTwisterPort(t, target)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	require.NoError(t, target.BitTwister.WaitForStart(ctx), "Error waiting for BitTwister to start")
 
 	require.NoError(t, executor.Start(), "Error starting executor instance")
 
@@ -482,6 +494,10 @@ func TestBittwister_Jitter(t *testing.T) {
 	require.NoError(t, target.Start(), "Error starting target instance")
 
 	forwardBitTwisterPort(t, target)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
+	defer cancel()
+	require.NoError(t, target.BitTwister.WaitForStart(ctx), "Error waiting for BitTwister to start")
 
 	require.NoError(t, executor.Start(), "Error starting executor instance")
 
