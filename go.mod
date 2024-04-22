@@ -7,7 +7,7 @@ toolchain go1.22.1
 require (
 	github.com/celestiaorg/celestia-app v1.7.0
 	github.com/celestiaorg/celestia-node v0.13.1
-	github.com/celestiaorg/knuu v0.13.2
+	github.com/celestiaorg/knuu v0.13.3-rc.0.0.20240422105431-6e28cd7af139
 	github.com/cosmos/cosmos-sdk v0.46.16
 	github.com/rs/zerolog v1.32.0
 	github.com/sirupsen/logrus v1.9.3
@@ -147,7 +147,7 @@ require (
 	github.com/google/orderedcode v0.0.1 // indirect
 	github.com/google/pprof v0.0.0-20231229205709-960ae82b1e42 // indirect
 	github.com/google/s2a-go v0.1.7 // indirect
-	github.com/google/uuid v1.6.0 // indirect
+	github.com/google/uuid v1.6.0
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
 	github.com/gorilla/handlers v1.5.2 // indirect
